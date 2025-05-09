@@ -1445,28 +1445,30 @@
                 }
             });
         });
-        
-        <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Cari pasal atau pelanggaran...">
-        <i class="fas fa-search search-icon"></i>
-    </div>
 
         // Fungsi pencarian
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            // Contoh: jika Anda memiliki tabel atau daftar untuk dicari
-            // const rows = document.querySelectorAll('#yourTableId tr');
+            const rows = document.querySelectorAll('#nyawaTable tr');
             
-            // rows.forEach(row => {
-            //     const text = row.textContent.toLowerCase();
-            //     if (text.includes(searchTerm)) {
-            //         row.style.display = '';
-            //     } else {
-            //         row.style.display = 'none';
-            //     }
-            // });
-            
-            console.log('Sedang mencari:', searchTerm); // Untuk debugging
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                let rowText = '';
+                
+                cells.forEach(cell => {
+                    if (!cell.querySelector('.checkbox')) { // Skip checkbox cell
+                        rowText += cell.textContent.toLowerCase() + ' ';
+                    }
+                });
+                
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = '';
+                    row.classList.add('highlight');
+                } else {
+                    row.style.display = 'none';
+                    row.classList.remove('highlight');
+                }
+            });
         });
         
         // Fokus ke input saat ikon diklik
@@ -1480,6 +1482,20 @@
                 e.preventDefault();
                 document.getElementById('searchInput').focus();
             }
+        });
+        
+        // Fungsi untuk checkbox
+        const checkboxes = document.querySelectorAll('.checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('tr');
+                if (this.checked) {
+                    row.style.backgroundColor = '#e3f2fd';
+                } else {
+                    row.style.backgroundColor = '';
+                }
+                console.log('Checkbox changed:', this.dataset.uu, this.checked);
+            });
         });
     </script>
 </body>
