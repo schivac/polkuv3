@@ -476,7 +476,7 @@
                     <td><input type="checkbox" class="checkbox" data-uu="A11" data-tindak="TERLIBAT DALAM BALAPAN LIAR"></td>
                     <td class="text-left">TERLIBAT DALAM BALAPAN LIAR</td>
                     <td>2,500</td>
-                    <td>PENJARA 10 BULAN</td>
+                    <td>10</td>
                 </tr>
                 <tr>
                     <td>A12</td>
@@ -1053,200 +1053,217 @@
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Contact Modal -->
-    <div class="modal" id="contactModal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Informasi Pembuat</h2>
-            <div class="modal-body">
-                <p><i class="fas fa-user"></i> Dibuat oleh Mariono Senopati</p>
-                <p><i class="fab fa-discord"></i> Discord: itsmario0</p>
-                <p><i class="fas fa-calendar-alt"></i> Dibuat pada tanggal: 10 Mei 2025</p>
+        
+        <!-- Contact Modal -->
+        <div class="modal" id="contactModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Informasi Pembuat</h2>
+                <div class="modal-body">
+                    <p><i class="fas fa-user"></i> Dibuat oleh Mariono Senopati</p>
+                    <p><i class="fab fa-discord"></i> Discord: itsmario0</p>
+                    <p><i class="fas fa-calendar-alt"></i> Dibuat pada tanggal: 10 Mei 2025</p>
+                </div>
             </div>
         </div>
-    </div>
-
-    <script>
-        // Contact Modal functionality
-        const contactBtn = document.getElementById('contactBtn');
-        const contactModal = document.getElementById('contactModal');
-        const closeBtn = document.querySelector('.close');
         
-        contactBtn.addEventListener('click', function() {
-            contactModal.style.display = 'flex';
-        });
-        
-        closeBtn.addEventListener('click', function() {
-            contactModal.style.display = 'none';
-        });
-        
-        window.addEventListener('click', function(e) {
-            if (e.target === contactModal) {
+        <script>
+            // Contact Modal functionality
+            const contactBtn = document.getElementById('contactBtn');
+            const contactModal = document.getElementById('contactModal');
+            const closeBtn = document.querySelector('.close');
+            
+            contactBtn.addEventListener('click', function() {
+                contactModal.style.display = 'flex';
+            });
+            
+            closeBtn.addEventListener('click', function() {
                 contactModal.style.display = 'none';
-            }
-        });
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#nyawaTable tr');
+            });
             
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                if (text.includes(searchTerm)) {
-                    row.style.display = '';
-                    row.classList.add('highlight');
-                } else {
-                    row.style.display = 'none';
-                    row.classList.remove('highlight');
+            window.addEventListener('click', function(e) {
+                if (e.target === contactModal) {
+                    contactModal.style.display = 'none';
                 }
             });
-        });
-
-        // Checkbox functionality for summary
-        const checkboxes = document.querySelectorAll('.checkbox');
-        const summaryBody = document.getElementById('summary-body');
-        const totalDenda = document.getElementById('total-denda');
-        const totalTahanan = document.getElementById('total-tahanan');
-        const totalPasal = document.getElementById('total-pasal');
-        const summaryContainer = document.getElementById('summary-container');
         
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateSummary);
-        });
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#nyawaTable tr, #lalinTable tr, #ringanTable tr, #sedangTable tr, #beratTable tr');
+                
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        row.style.display = '';
+                        row.classList.add('highlight');
+                    } else {
+                        row.style.display = 'none';
+                        row.classList.remove('highlight');
+                    }
+                });
+            });
         
-        function updateSummary() {
-            // Clear previous summary
-            summaryBody.innerHTML = '';
+            // Checkbox functionality for summary
+            const checkboxes = document.querySelectorAll('.checkbox');
+            const summaryBody = document.getElementById('summary-body');
+            const totalDenda = document.getElementById('total-denda');
+            const totalTahanan = document.getElementById('total-tahanan');
+            const totalPasal = document.getElementById('total-pasal');
+            const summaryContainer = document.getElementById('summary-container');
             
-            let dendaTotal = 0;
-            let tahananTotal = 0;
-            let selectedCount = 0;
-            let pasalList = [];
-            
-            // Add selected violations to summary
             checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    selectedCount++;
-                    const row = checkbox.closest('tr');
-                    const pasal = row.cells[0].textContent;
-                    const tindak = checkbox.dataset.tindak;
-                    const denda = parseInt(row.cells[3].textContent.replace(/,/g, ''));
-                    const tahanan = parseInt(row.cells[4].textContent);
-                    
-                    // Add to totals
-                    dendaTotal += denda;
-                    tahananTotal += tahanan;
-                    pasalList.push(pasal);
-                    
-                    // Add to summary table
-                    const newRow = document.createElement('tr');
-                    newRow.innerHTML = `
-                        <td>${pasal}</td>
-                        <td>${tindak}</td>
-                        <td>$${denda.toLocaleString()}</td>
-                        <td>${tahanan}</td>
-                    `;
-                    summaryBody.appendChild(newRow);
+                checkbox.addEventListener('change', updateSummary);
+            });
+            
+            function parseDendaValue(dendaText) {
+                if (dendaText.includes('$')) {
+                    return parseInt(dendaText.replace(/\D/g, '')) || 0;
                 }
-            });
+                return 0; // For non-monetary punishments
+            }
             
-            // Update totals
-            totalDenda.textContent = `$${dendaTotal.toLocaleString()}`;
-            totalTahanan.textContent = tahananTotal;
-            totalPasal.textContent = pasalList.join(', ');
+            function parseTahananValue(tahananText) {
+                if (tahananText.match(/\d+/)) {
+                    return parseInt(tahananText.match(/\d+/)[0]);
+                }
+                return 0; // For non-numeric punishments
+            }
             
-            // Show/hide summary container based on selections
-            summaryContainer.style.display = selectedCount > 0 ? 'block' : 'none';
-        }
-        
-        // Copy UU functionality
-        document.getElementById('copyUU').addEventListener('click', function() {
-            const pasalText = document.getElementById('total-pasal').textContent;
-            
-            navigator.clipboard.writeText(pasalText).then(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Pasal telah disalin ke clipboard',
-                    timer: 2000,
-                    showConfirmButton: false
+            function updateSummary() {
+                // Clear previous summary
+                summaryBody.innerHTML = '';
+                
+                let dendaTotal = 0;
+                let tahananTotal = 0;
+                let selectedCount = 0;
+                let pasalList = [];
+                
+                // Add selected violations to summary
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selectedCount++;
+                        const row = checkbox.closest('tr');
+                        const pasal = row.cells[0].textContent;
+                        const tindak = checkbox.dataset.tindak;
+                        const dendaCell = row.cells[3].textContent.trim();
+                        const tahananCell = row.cells[4].textContent.trim();
+                        
+                        // Parse denda value
+                        const dendaValue = parseDendaValue(dendaCell);
+                        dendaTotal += dendaValue;
+                        
+                        // Parse tahanan value (only numeric parts)
+                        tahananTotal += parseTahananValue(tahananCell);
+                        
+                        pasalList.push(pasal);
+                        
+                        // Add to summary table
+                        const newRow = document.createElement('tr');
+                        newRow.innerHTML = `
+                            <td>${pasal}</td>
+                            <td>${tahananCell.includes('HUKUMAN MATI') ? `<span class="death-penalty">${tindak}</span>` : tindak}</td>
+                            <td>${dendaCell.startsWith('$') ? dendaCell : (dendaCell === '-' ? '-' : `$${dendaCell}`)}</td>
+                            <td>${tahananCell}</td>
+                        `;
+                        summaryBody.appendChild(newRow);
+                    }
                 });
-            });
-        });
-        
-        // Copy Denda functionality
-        document.getElementById('copyDenda').addEventListener('click', function() {
-            const dendaText = document.getElementById('total-denda').textContent;
+                
+                // Update totals
+                totalDenda.textContent = dendaTotal > 0 ? `$${dendaTotal.toLocaleString()}` : '-';
+                totalTahanan.textContent = tahananTotal > 0 ? tahananTotal : '-';
+                totalPasal.textContent = pasalList.join(', ');
+                
+                // Show/hide summary container based on selections
+                summaryContainer.style.display = selectedCount > 0 ? 'block' : 'none';
+            }
             
-            navigator.clipboard.writeText(dendaText).then(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Total denda telah disalin ke clipboard',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            });
-        });
-        
-        // Copy Tahanan functionality
-        document.getElementById('copyTahanan').addEventListener('click', function() {
-            const tahananText = document.getElementById('total-tahanan').textContent;
-            
-            navigator.clipboard.writeText(tahananText).then(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Masa tahanan telah disalin ke clipboard',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-            });
-        });
-        
-        // Reset button functionality
-        document.getElementById('resetButton').addEventListener('click', function() {
-            Swal.fire({
-                title: 'Reset Data',
-                text: 'Apakah Anda yakin ingin mereset semua pilihan?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Reset!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Uncheck all checkboxes
-                    checkboxes.forEach(checkbox => {
-                        checkbox.checked = false;
-                    });
-                    
-                    // Update summary
-                    updateSummary();
-                    
+            // Copy UU functionality
+            document.getElementById('copyUU').addEventListener('click', function() {
+                const pasalText = document.getElementById('total-pasal').textContent;
+                
+                navigator.clipboard.writeText(pasalText).then(() => {
                     Swal.fire({
-                        title: 'Direset!',
-                        text: 'Semua pilihan telah direset',
                         icon: 'success',
-                        timer: 1500,
+                        title: 'Berhasil!',
+                        text: 'Pasal telah disalin ke clipboard',
+                        timer: 2000,
                         showConfirmButton: false
                     });
-                }
-            }).catch(error => {
-                if (error !== 'Dibatalkan') {
-                    Swal.fire({
-                        title: 'Gagal!',
-                        text: error || 'Terjadi kesalahan dalam memproses data',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                }
+                });
             });
-        });
-    </script>
+            
+            // Copy Denda functionality
+            document.getElementById('copyDenda').addEventListener('click', function() {
+                const dendaText = document.getElementById('total-denda').textContent;
+                
+                navigator.clipboard.writeText(dendaText).then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Total denda telah disalin ke clipboard',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                });
+            });
+            
+            // Copy Tahanan functionality
+            document.getElementById('copyTahanan').addEventListener('click', function() {
+                const tahananText = document.getElementById('total-tahanan').textContent;
+                
+                navigator.clipboard.writeText(tahananText).then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: 'Masa tahanan telah disalin ke clipboard',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                });
+            });
+            
+            // Reset button functionality
+            document.getElementById('resetButton').addEventListener('click', function() {
+                Swal.fire({
+                    title: 'Reset Data',
+                    text: 'Apakah Anda yakin ingin mereset semua pilihan?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Reset!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Uncheck all checkboxes
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        
+                        // Update summary
+                        updateSummary();
+                        
+                        Swal.fire({
+                            title: 'Direset!',
+                            text: 'Semua pilihan telah direset',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                }).catch(error => {
+                    if (error !== 'Dibatalkan') {
+                        Swal.fire({
+                            title: 'Gagal!',
+                            text: error || 'Terjadi kesalahan dalam memproses data',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                });
+            });
+        </script>
 </body>
 </html>
