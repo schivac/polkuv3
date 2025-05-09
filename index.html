@@ -1061,18 +1061,108 @@
         <i class="fas fa-info-circle"></i>
     </div>
     
-    <!-- Contact Modal -->
-    <div class="modal" id="contactModal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Informasi Pembuat</h2>
-            <div class="modal-body">
-                <p><i class="fas fa-user"></i> Dibuat oleh Mariono Senopati</p>
-                <p><i class="fab fa-discord"></i> Discord: itsmario0</p>
-                <p><i class="fas fa-calendar-alt"></i> Dibuat pada tanggal: 10 Mei 2025</p>
+<!-- Contact Modal -->
+<div class="modal" id="contactModal">
+    <div class="modal-content animate-pop">
+        <span class="close">&times;</span>
+        <h2><i class="fas fa-info-circle"></i> Tentang Pembuat</h2>
+        <div class="modal-body">
+            <div class="profile-section">
+                <img src="https://i.imgur.com/your-profile-pic.png" alt="Foto Profil" class="profile-pic">
+                <h3>Mariono Senopati</h3>
+                <p><i class="fab fa-discord"></i> <strong>Discord:</strong> itsmario0</p>
+                <p><i class="fas fa-calendar-alt"></i> <strong>Dibuat pada:</strong> 10 Mei 2025</p>
+                <p><i class="fas fa-envelope"></i> <strong>Email:</strong> mariono@example.com</p>
+                <div class="social-links">
+                    <a href="https://instagram.com/itsmario0" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://tiktok.com/@itsmario0" target="_blank" class="social-icon">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://github.com/itsmario0" target="_blank" class="social-icon">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+<style>
+/* Modal Content Animation */
+.animate-pop {
+    animation: pop 0.4s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Profile Section */
+.profile-section {
+    text-align: center;
+    padding: 10px;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 3px solid #3085d6;
+}
+
+.social-links {
+    margin-top: 10px;
+}
+
+.social-icon {
+    font-size: 1.5rem;
+    margin: 0 8px;
+    color: #555;
+    transition: color 0.3s;
+}
+
+.social-icon:hover {
+    color: #3085d6;
+}
+
+/* Modal Basic Styling */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+</style>
+
     
     <script>
         // Contact Modal functionality
