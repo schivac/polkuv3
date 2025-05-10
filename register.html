@@ -182,90 +182,110 @@
     </div>
 
     <script>
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim permohonan...';
-            
-            const userData = {
-                nrp: document.getElementById('nrp').value,
-                fullname: document.getElementById('fullname').value,
-                pangkat: document.getElementById('pangkat').value,
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value,
-                status: 'pending',
-                timestamp: new Date().toISOString()
-            };
-            
-            try {
-                // Kirim data ke webhook admin
-                const response = await sendToAdminWebhook(userData);
-                
-                if(response.success) {
-                    // Simpan data di localStorage sambil menunggu persetujuan
-                    const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
-                    pendingUsers.push(userData);
-                    localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
-                    
-                    document.getElementById('statusMessage').textContent = 
-                        'Permohonan registrasi telah dikirim ke admin. Silakan tunggu persetujuan.';
-                    
-                    Swal.fire({
-                        title: 'Permohonan Terkirim!',
-                        text: 'Registrasi Anda sedang menunggu persetujuan admin',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    });
-                    
-                    document.getElementById('registerForm').reset();
-                } else {
-                    throw new Error('Gagal mengirim ke server admin');
-                }
-            } catch (error) {
-                Swal.fire({
-                    title: 'Error!',
-                    text: error.message,
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> DAFTAR';
-            }
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim permohonan...';
+    
+    const userData = {
+        nrp: document.getElementById('nrp').value,
+        fullname: document.getElementById('fullname').value,
+        pangkat: document.getElementById('pangkat').value,
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+        status: 'pending',
+        timestamp: new Date().toISOString()
+    };
+    
+    // Validasi data
+    if(!userData.nrp || !userData.fullname || !userData.pangkat || !userData.username || !userData.password) {
+        Swal.fire({
+            title: 'Error!',
+            text: 'Semua field harus diisi!',
+            icon: 'error'
         });
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> DAFTAR';
+        return;
+    }
+    
+    try {
+        // Kirim ke Discord Webhook
+        const webhookResult = await sendToDiscordWebhook(userData);
         
-        // Fungsi untuk mengirim data ke webhook admin
-        async function sendToAdminWebhook(userData) {
-            // Ganti URL_WEBHOOK_ADMIN dengan webhook sebenarnya
-            const WEBHOOK_URL = 'URL_WEBHOOKhttps://discord.com/api/webhooks/1370890156407656529/_8LhsQcuHV1L1YExTSxf0trClfmog4T1iYY4td9LQs8Rten7WiZ86NUExf47VwNeBSsb_ADMIN';
+        if(webhookResult.success) {
+            // Simpan data pending
+            const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
+            pendingUsers.push(userData);
+            localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
             
-            const response = await fetch(WEBHOOK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    type: 'registration_request',
-                    data: userData,
-                    actions: [
-                        {
-                            text: 'Setujui',
-                            url: `${window.location.origin}/approve.html?nrp=${userData.nrp}`,
-                            style: 'success'
-                        },
-                        {
-                            text: 'Tolak',
-                            url: `${window.location.origin}/reject.html?nrp=${userData.nrp}`,
-                            style: 'danger'
-                        }
-                    ]
-                })
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'Permohonan telah dikirim ke admin. Anda akan menerima notifikasi ketika disetujui.',
+                icon: 'success'
             });
             
-            return await response.json();
+            document.getElementById('registerForm').reset();
+        } else {
+            throw new Error(webhookResult.error || 'Gagal mengirim ke Discord');
         }
+    } catch (error) {
+        Swal.fire({
+            title: 'Error!',
+            text: error.message,
+            icon: 'error'
+        });
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> DAFTAR';
+    }
+});
+        
+        async function sendToDiscordWebhook(userData) {
+    const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1370890156407656529/_8LhsQcuHV1L1YExTSxf0trClfmog4T1iYY4td9LQs8Rten7WiZ86NUExf47VwNeBSsb';
+    
+    try {
+        // Format pesan untuk Discord
+        const embed = {
+            title: "🆕 Permohonan Registrasi Baru",
+            description: `**NRP:** ${userData.nrp}\n**Nama:** ${userData.fullname}\n**Pangkat:** ${userData.pangkat}`,
+            color: 0x3498db, // Warna biru
+            timestamp: new Date().toISOString(),
+            fields: [
+                {
+                    name: "Actions",
+                    value: `[APPROVE](${window.location.origin}/approve.html?nrp=${userData.nrp}&token=${btoa(userData.nrp+userData.timestamp)}) | [REJECT](${window.location.origin}/reject.html?nrp=${userData.nrp}&token=${btoa(userData.nrp+userData.timestamp)})`
+                }
+            ]
+        };
+
+        const response = await fetch(DISCORD_WEBHOOK, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: "Registration Bot",
+                avatar_url: "https://i.imgur.com/abcdefg.png", // URL gambar bot
+                embeds: [embed]
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Discord API error: ${response.status}`);
+        }
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error sending to Discord:", error);
+        return { 
+            success: false,
+            error: error.message
+        };
+    }
+}
     </script>
 </body>
 </html>
