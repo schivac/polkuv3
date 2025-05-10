@@ -1180,12 +1180,13 @@
 
     
     <script>
-        // Contact Modal functionality
+        // Modal functionality
         const contactBtn = document.getElementById('contactBtn');
         const contactModal = document.getElementById('contactModal');
         const closeBtn = document.querySelector('.close');
         
-        contactBtn.addEventListener('click', function() {
+        contactBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             contactModal.style.display = 'flex';
         });
         
@@ -1198,6 +1199,7 @@
                 contactModal.style.display = 'none';
             }
         });
+
     
         // Search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
