@@ -3,84 +3,91 @@
 <head>
     <title>Approval System</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Approval Processor</h1>
+        <p id="status">Memproses permintaan...</p>
+    </div>
+
     <script>
-        // Fungsi untuk mendapatkan parameter URL
-        function getUrlParams() {
-            const params = {};
-            const queryString = window.location.search.substring(1);
-            const pairs = queryString.split('&');
-            
-            pairs.forEach(pair => {
-                const [key, value] = pair.split('=');
-                params[key] = decodeURIComponent(value);
-            });
-            
-            return params;
+        // Fungsi untuk menampilkan error
+        function showError(message) {
+            document.getElementById('status').innerHTML = `
+                <div style="color: red; margin: 20px 0;">
+                    <strong>Error:</strong> ${message}
+                </div>
+                <button onclick="window.close()" style="
+                    padding: 8px 16px;
+                    background: #2c3e50;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                ">
+                    Tutup Window
+                </button>
+            `;
         }
 
         // Fungsi utama
-        async function processApproval() {
-            const { nrp, token } = getUrlParams();
-            
-            // Validasi parameter
+        function processApproval() {
+            const params = new URLSearchParams(window.location.search);
+            const nrp = params.get('nrp');
+            const token = params.get('token');
+
             if (!nrp || !token) {
-                showError("Parameter tidak valid");
+                showError("Parameter URL tidak valid");
                 return;
             }
 
-            // Verifikasi token (contoh sederhana)
-            const isValidToken = atob(token) === `approve_${nrp}`;
-            
-            if (!isValidToken) {
-                showError("Token tidak valid");
-                return;
-            }
-
-            // Tampilkan dialog konfirmasi
-            const { isConfirmed } = await Swal.fire({
-                title: 'Konfirmasi Persetujuan',
-                html: `Anda yakin ingin menyetujui registrasi NRP <b>${nrp}</b>?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Ya, Setujui',
-                cancelButtonText: 'Batal'
-            });
-
-            if (isConfirmed) {
-                // Simpan persetujuan (contoh menggunakan localStorage)
-                const approvals = JSON.parse(localStorage.getItem('approvals') || '{}');
+            // Simulasi proses approval (di real implementation, ini akan ke database)
+            setTimeout(() => {
+                document.getElementById('status').textContent = `Approval untuk NRP ${nrp} berhasil diproses`;
+                
+                // Simpan di localStorage (contoh sederhana)
+                const approvals = JSON.parse(localStorage.getItem('approvals') || {});
                 approvals[nrp] = { status: 'approved', timestamp: new Date().toISOString() };
                 localStorage.setItem('approvals', JSON.stringify(approvals));
-
-                // Tampilkan notifikasi sukses
-                await Swal.fire({
-                    title: 'Berhasil!',
-                    text: `Registrasi NRP ${nrp} telah disetujui`,
-                    icon: 'success'
-                });
-
-                // Redirect atau tutup window
-                window.close();
-            } else {
-                window.close();
-            }
+                
+                // Tampilkan tombol tutup
+                document.getElementById('status').innerHTML += `
+                    <div style="margin-top: 20px;">
+                        <button onclick="window.close()" style="
+                            padding: 8px 16px;
+                            background: #27ae60;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        ">
+                            Tutup Window
+                        </button>
+                    </div>
+                `;
+            }, 1500);
         }
 
-        function showError(message) {
-            Swal.fire({
-                title: 'Error!',
-                text: message,
-                icon: 'error'
-            }).then(() => {
-                window.close();
-            });
-        }
-
-        // Jalankan proses saat halaman dimuat
+        // Jalankan saat halaman dimuat
         document.addEventListener('DOMContentLoaded', processApproval);
     </script>
-</head>
-<body>
-    <!-- Halaman kosong, semua diproses oleh JavaScript -->
 </body>
 </html>
