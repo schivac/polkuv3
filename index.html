@@ -361,6 +361,71 @@
             from { transform: scale(0.7); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
+
+        /* Dropdown Menu SOP */
+        .sop-link {
+            position: relative;
+        }
+        
+        .sop-link .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 200px;
+            display: none;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .sop-link:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu a {
+            color: #333;
+            padding: 10px 15px;
+            display: block;
+            text-decoration: none;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s;
+        }
+        
+        .dropdown-menu a:hover {
+            background-color: #f5f5f5;
+            color: #2c3e50;
+        }
+        
+        .dropdown-menu a i {
+            margin-right: 8px;
+            color: #7f8c8d;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sop-link .dropdown-menu {
+                position: static;
+                box-shadow: none;
+                display: none;
+                opacity: 1;
+                transform: none;
+                border-top: 1px solid #eee;
+            }
+            
+            .sop-link:hover .dropdown-menu {
+                display: none;
+            }
+            
+            .sop-link.active .dropdown-menu {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -376,7 +441,7 @@
                                 <i class="fas fa-home"></i> Beranda
                             </a>
                         </li>
-                        <li class="nav-link sop-link">
+                                                <li class="nav-link sop-link">
                             <a href="#">
                                 <i class="fas fa-file-alt"></i> SOP
                                 <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 12px;"></i>
@@ -1201,20 +1266,18 @@
             }
         });
 
-        // Tambahan untuk menu SOP pada mobile
-        document.querySelector('.sop-link a').addEventListener('click', function(e) {
+        // Untuk tampilan mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const sopLink = document.querySelector('.sop-link');
+            
             if (window.innerWidth <= 768) {
-                e.preventDefault();
-                const menu = this.nextElementSibling;
-                if (menu.style.display === 'block') {
-                    menu.style.display = 'none';
-                } else {
-                    menu.style.display = 'block';
-                }
+                sopLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    this.classList.toggle('active');
+                });
             }
         });
 
-    
         // Search functionality
         document.getElementById('searchInput').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
