@@ -1,44 +1,191 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Login - Polisi KotakuV3</title>
-  <link rel="stylesheet" href="assets/css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script type="module" src="assets/js/auth.js"></script>
-</head>
-<body>
-  <div class="login-container">
-    <h1>LOGIN</h1>
-    <form id="loginForm">
-      <input type="email" id="email" placeholder="Email" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Login</button>
-    </form>
-    <p>Belum punya akun? <a href="register.html">Daftar disini</a></p>
-  </div>
-
-  <script type="module">
-    import { auth } from './assets/js/firebase.js';
-    
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-
-      try {
-        // Cek apakah user sudah disetujui admin
-        const userSnapshot = await db.collection('pendingUsers').where('email', '==', email).get();
-        if (!userSnapshot.empty && userSnapshot.docs[0].data().status !== 'approved') {
-          throw new Error('Akun Anda belum disetujui admin!');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Polisi KotakuV3</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <style>
+        /* CSS tetap seperti punyamu, sudah bagus */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        // Login dengan Firebase Auth
-        await auth.signInWithEmailAndPassword(email, password);
-        window.location.href = 'dashboard.html';
-      } catch (error) {
-        Swal.fire('Error!', error.message, 'error');
-      }
-    });
-  </script>
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('police-bg.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 100px;
+            height: auto;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52,152,219,0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <img src="logo-polisi.png" alt="Logo Polisi KotakuV3">
+        </div>
+        <h1>LOGIN SISTEM POLISI KOTAKUV3</h1>
+        
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div id="errorMessage" class="error-message"></div>
+            
+            <button type="submit"><i class="fas fa-sign-in-alt"></i> LOGIN</button>
+            
+            <div class="links">
+                <a href="register.html">Belum punya akun? Daftar disini</a>
+                <br>
+                <a href="forgot-password.html">Lupa password?</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDORjstoitYjNGvvqKx7f-PjOfOP3seIfc",
+  authDomain: "uukotaku.firebaseapp.com",
+  projectId: "uukotaku",
+  storageBucket: "uukotaku.firebasestorage.app",
+  messagingSenderId: "666796153269",
+  appId: "1:666796153269:web:4b201eeaeacf9a24b261fc",
+
+}; 
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Tangani Form Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Login sukses
+                    window.location.href = 'beranda.html';
+                })
+                .catch((error) => {
+                    errorMessage.textContent = error.message;
+                });
+        });
+
+        // Cek apakah sudah login
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = 'beranda.html';
+            }
+        });
+    </script>
 </body>
 </html>
