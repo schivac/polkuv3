@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi - Polisi KotakuV3</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+                * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('police-bg.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .register-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .logo {
+            margin-bottom: 20px;
+        }
+        
+        .logo img {
+            width: 100px;
+            height: auto;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52,152,219,0.5);
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #34495e;
+        }
+        
+        .links {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .links a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .success-message {
+            color: #27ae60;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .status-pending {
+            color: #f39c12;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">
+            <img src="logo-polisi.png" alt="Logo Polisi KotakuV3">
+        </div>
+        <h1>REGISTRASI AKUN POLISI KOTAKUV3</h1>
+        
+        <form id="registerForm">
+                        <div class="input-group">
+                <label for="nrp">NRP</label>
+                <input type="text" id="nrp" name="nrp" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="fullname">Nama Lengkap</label>
+                <input type="text" id="fullname" name="fullname" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="pangkat">Pangkat</label>
+                <select id="pangkat" name="pangkat" required>
+                    <option value="">Pilih Pangkat</option>
+                    <option value="Brigadir">Brigadir</option>
+                    <option value="Ajun Inspektur">Ajun Inspektur</option>
+                    <option value="Inspektur">Inspektur</option>
+                    <option value="Komisaris">Komisaris</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="confirmPassword">Konfirmasi Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            
+            <div id="errorMessage" class="error-message"></div>
+            <div id="statusMessage" class="status-pending"></div>
+            
+            <button type="submit" id="submitBtn"><i class="fas fa-user-plus"></i> DAFTAR</button>
+            
+            <div class="links">
+                <a href="index.html">Sudah punya akun? Login disini</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim permohonan...';
+            
+            const userData = {
+                nrp: document.getElementById('nrp').value,
+                fullname: document.getElementById('fullname').value,
+                pangkat: document.getElementById('pangkat').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                status: 'pending',
+                timestamp: new Date().toISOString()
+            };
+            
+            try {
+                // Kirim data ke webhook admin
+                const response = await sendToAdminWebhook(userData);
+                
+                if(response.success) {
+                    // Simpan data di localStorage sambil menunggu persetujuan
+                    const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || '[]');
+                    pendingUsers.push(userData);
+                    localStorage.setItem('pendingUsers', JSON.stringify(pendingUsers));
+                    
+                    document.getElementById('statusMessage').textContent = 
+                        'Permohonan registrasi telah dikirim ke admin. Silakan tunggu persetujuan.';
+                    
+                    Swal.fire({
+                        title: 'Permohonan Terkirim!',
+                        text: 'Registrasi Anda sedang menunggu persetujuan admin',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                    
+                    document.getElementById('registerForm').reset();
+                } else {
+                    throw new Error('Gagal mengirim ke server admin');
+                }
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> DAFTAR';
+            }
+        });
+        
+        // Fungsi untuk mengirim data ke webhook admin
+        async function sendToAdminWebhook(userData) {
+            // Ganti URL_WEBHOOK_ADMIN dengan webhook sebenarnya
+            const WEBHOOK_URL = 'URL_WEBHOOKhttps://discord.com/api/webhooks/1370890156407656529/_8LhsQcuHV1L1YExTSxf0trClfmog4T1iYY4td9LQs8Rten7WiZ86NUExf47VwNeBSsb_ADMIN';
+            
+            const response = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type: 'registration_request',
+                    data: userData,
+                    actions: [
+                        {
+                            text: 'Setujui',
+                            url: `${window.location.origin}/approve.html?nrp=${userData.nrp}`,
+                            style: 'success'
+                        },
+                        {
+                            text: 'Tolak',
+                            url: `${window.location.origin}/reject.html?nrp=${userData.nrp}`,
+                            style: 'danger'
+                        }
+                    ]
+                })
+            });
+            
+            return await response.json();
+        }
+    </script>
+</body>
+</html>
