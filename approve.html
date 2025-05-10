@@ -1,97 +1,86 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Persetujuan Registrasi</title>
+    <title>Approval System</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="auth.js"></script>
+    <script>
+        // Fungsi untuk mendapatkan parameter URL
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split('&');
+            
+            pairs.forEach(pair => {
+                const [key, value] = pair.split('=');
+                params[key] = decodeURIComponent(value);
+            });
+            
+            return params;
+        }
+
+        // Fungsi utama
+        async function processApproval() {
+            const { nrp, token } = getUrlParams();
+            
+            // Validasi parameter
+            if (!nrp || !token) {
+                showError("Parameter tidak valid");
+                return;
+            }
+
+            // Verifikasi token (contoh sederhana)
+            const isValidToken = atob(token) === `approve_${nrp}`;
+            
+            if (!isValidToken) {
+                showError("Token tidak valid");
+                return;
+            }
+
+            // Tampilkan dialog konfirmasi
+            const { isConfirmed } = await Swal.fire({
+                title: 'Konfirmasi Persetujuan',
+                html: `Anda yakin ingin menyetujui registrasi NRP <b>${nrp}</b>?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Setujui',
+                cancelButtonText: 'Batal'
+            });
+
+            if (isConfirmed) {
+                // Simpan persetujuan (contoh menggunakan localStorage)
+                const approvals = JSON.parse(localStorage.getItem('approvals') || '{}');
+                approvals[nrp] = { status: 'approved', timestamp: new Date().toISOString() };
+                localStorage.setItem('approvals', JSON.stringify(approvals));
+
+                // Tampilkan notifikasi sukses
+                await Swal.fire({
+                    title: 'Berhasil!',
+                    text: `Registrasi NRP ${nrp} telah disetujui`,
+                    icon: 'success'
+                });
+
+                // Redirect atau tutup window
+                window.close();
+            } else {
+                window.close();
+            }
+        }
+
+        function showError(message) {
+            Swal.fire({
+                title: 'Error!',
+                text: message,
+                icon: 'error'
+            }).then(() => {
+                window.close();
+            });
+        }
+
+        // Jalankan proses saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', processApproval);
+    </script>
 </head>
 <body>
-    <script>
-        // approve.html
-document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const nrp = urlParams.get('nrp');
-    const token = urlParams.get('token');
-    
-    // Verifikasi token sederhana
-    if(!nrp || !token) {
-        showError('Parameter tidak valid');
-        return;
-    }
-    
-    // Cari user yang pending
-    const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || []);
-    const userIndex = pendingUsers.findIndex(u => u.nrp === nrp);
-    
-    if(userIndex === -1) {
-        showError('Data pengguna tidak ditemukan');
-        return;
-    }
-    
-    const user = pendingUsers[userIndex];
-    
-    // Verifikasi token (sederhana)
-    const expectedToken = btoa(user.nrp + user.timestamp);
-    if(token !== expectedToken) {
-        showError('Token tidak valid');
-        return;
-    }
-    
-    // Tampilkan dialog konfirmasi
-    Swal.fire({
-        title: 'Setujui Registrasi?',
-        html: `
-            <p>NRP: <strong>${user.nrp}</strong></p>
-            <p>Nama: <strong>${user.fullname}</strong></p>
-            <p>Pangkat: <strong>${user.pangkat}</strong></p>
-        `,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Setujui',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            approveUser(user);
-        } else {
-            window.close();
-        }
-    });
-});
-
-function approveUser(user) {
-    const pendingUsers = JSON.parse(localStorage.getItem('pendingUsers') || []);
-    const users = JSON.parse(localStorage.getItem('users') || []);
-    
-    // Pindahkan ke users approved
-    user.status = 'approved';
-    users.push(user);
-    
-    // Hapus dari pending
-    const updatedPending = pendingUsers.filter(u => u.nrp !== user.nrp);
-    
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('pendingUsers', JSON.stringify(updatedPending));
-    
-    Swal.fire({
-        title: 'Disetujui!',
-        text: 'Registrasi telah disetujui',
-        icon: 'success'
-    }).then(() => {
-        window.close();
-    });
-}
-
-function showError(message) {
-    Swal.fire({
-        title: 'Error!',
-        text: message,
-        icon: 'error'
-    }).then(() => {
-        window.close();
-    });
-}
-    </script>
+    <!-- Halaman kosong, semua diproses oleh JavaScript -->
 </body>
 </html>
