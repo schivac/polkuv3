@@ -457,6 +457,12 @@
                                 <i class="fas fa-address-book"></i> Kontak
                             </a>
                         </li>
+                        <!-- Tambahan Logout -->
+                        <li class="nav-link" id="logoutBtn">
+                        <a href="#">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
         </ul>
     </nav>
 
@@ -1540,6 +1546,14 @@
             });
         });
         
+        // Script untuk tombol Logout
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Hapus session login
+            sessionStorage.removeItem('isLoggedIn');
+            // Redirect ke halaman login
+            window.location.href = 'index.html';
+        });
     </script>
 </body>
 </html>
