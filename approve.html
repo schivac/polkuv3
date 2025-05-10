@@ -1,76 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Approval System</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        body { 
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-    </style>
+  <title>Approval System</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script type="module" src="assets/js/firebase.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h2>Sistem Persetujuan Admin</h2>
-        <div id="status-container">
-            <p id="status-text">Memproses permintaan persetujuan...</p>
-            <div id="action-buttons" style="display: none; margin-top: 20px;">
-                <button onclick="window.close()" class="btn-close">Tutup Window</button>
-            </div>
-        </div>
-    </div>
+  <script type="module">
+    import { db } from './assets/js/firebase.js';
 
-    <script>
-        // Fungsi utama
-        function processApproval() {
-            const params = new URLSearchParams(window.location.search);
-            const nrp = params.get('nrp');
-            const token = params.get('token');
+    // Ambil UID dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const uid = urlParams.get('uid');
 
-            // Validasi parameter
-            if (!nrp || !token) {
-                showError("Parameter tidak lengkap");
-                return;
-            }
-
-            // Simulasi proses async
-            setTimeout(() => {
-                document.getElementById('status-text').textContent = 
-                    `Registrasi NRP ${nrp} telah disetujui`;
-                
-                // Simpan status approval (contoh: localStorage)
-                const approvals = JSON.parse(localStorage.getItem('approvals') || '{}');
-                approvals[nrp] = { 
-                    status: 'approved',
-                    timestamp: new Date().toISOString() 
-                };
-                localStorage.setItem('approvals', JSON.stringify(approvals));
-                
-                // Tampilkan tombol
-                document.getElementById('action-buttons').style.display = 'block';
-            }, 1500);
-        }
-
-        function showError(message) {
-            document.getElementById('status-text').innerHTML = 
-                `<span style="color:red">Error: ${message}</span>`;
-            document.getElementById('action-buttons').style.display = 'block';
-        }
-
-        // Jalankan saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', processApproval);
-    </script>
+    if (!uid) {
+      Swal.fire('Error!', 'UID tidak valid.', 'error');
+    } else {
+      // Update status user jadi "approved"
+      await db.collection('pendingUsers').doc(uid).update({ status: 'approved' });
+      
+      Swal.fire(
+        'Disetujui!', 
+        'User telah aktif.', 
+        'success'
+      ).then(() => window.close());
+    }
+  </script>
 </body>
 </html>
