@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Undang-Undang Kotaku</title>
+    <style>
+        :root {
+            --primary-color: #1f2937;
+            --secondary-color: #3b82f6;
+            --danger-color: #dc2626;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --light-color: #f9fafb;
+            --dark-color: #111827;
+        }
+        
+        body {
+            background-image: url('home.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-color);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 1200px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 3px;
+            background: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        .container button {
+            background-color: var(--primary-color);
+            color: var(--light-color);
+            font-size: 14px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            margin-right: 10px;
+        }
+        
+        .container button:hover {
+            background-color: var(--dark-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .button-reset {
+            background-color: var(--danger-color) !important;
+        }
+        
+        .button-denda {
+            background-color: var(--success-color) !important;
+        }
+        
+        .button-tahanan {
+            background-color: var(--warning-color) !important;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .hartabenda {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .senjata {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .keamanan {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .narkoba {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        
+        .aparatur {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .uangmerah {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .terorisme {
+            background-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        #summary-container {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            display: none;
+        }
+        
+        #summary-table th, #summary-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        #summary-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: 2px solid #ddd;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #searchInput:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        
+        .checkbox {
+            transform: scale(1.5);
+            cursor: pointer;
+            accent-color: var(--secondary-color);
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: var(--primary-color);
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            padding: 0.75rem 2rem;
+            margin: 20px auto;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-link {
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 0.5rem;
+        }
+
+        .nav-link a {
+            text-decoration: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .logo span {
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Additional Utility Classes */
+        .text-left {
+            text-align: left !important;
+        }
+        
+        .text-center {
+            text-align: center !important;
+        }
+        
+        .text-right {
+            text-align: right !important;
+        }
+        
+        .bold {
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            transform: scale(0.7);
+            animation: popUp 0.4s ease-in-out forwards;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #888;
+            transition: all 0.2s ease;
+        }
+        
+        .close:hover {
+            color: var(--danger-color);
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            margin-top: 20px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes popUp {
+            from { transform: scale(0.7); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Dropdown Menu SOP */
+        .sop-link {
+            position: relative;
+        }
+        
+        .sop-link .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 200px;
+            display: none;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .sop-link:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .dropdown-menu a {
+            color: #333;
+            padding: 10px 15px;
+            display: block;
+            text-decoration: none;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s;
+        }
+        
+        .dropdown-menu a:hover {
+            background-color: #f5f5f5;
+            color: #2c3e50;
+        }
+        
+        .dropdown-menu a i {
+            margin-right: 8px;
+            color: #7f8c8d;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sop-link .dropdown-menu {
+                position: static;
+                box-shadow: none;
+                display: none;
+                opacity: 1;
+                transform: none;
+                border-top: 1px solid #eee;
+            }
+            
+            .sop-link:hover .dropdown-menu {
+                display: none;
+            }
+            
+            .sop-link.active .dropdown-menu {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>Polisi KotakuV3</span>
+        </div>
+        
+                    <ul class="nav-links">
+                        <li class="nav-link">
+                            <a href="https://schivac.github.io/polkuv3/#">
+                                <i class="fas fa-home"></i> Beranda
+                            </a>
+                        </li>
+                                                <li class="nav-link sop-link">
+                            <a href="#">
+                                <i class="fas fa-file-alt"></i> SOP
+                                <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 12px;"></i>
+                            </a>
+                            <div class="dropdown-menu">
+                                <a href="sop-penilangan.html"><i class="fas fa-traffic-light"></i> SOP Penilangan</a>
+                                <a href=""><i class="fas fa-car"></i> SOP Impound</a>
+                                <a href=""><i class="fas fa-handcuffs"></i> SOP Penahanan</a>
+                            </div>
+                        </li>
+                        <li class="nav-link" id="contactBtn">
+                            <a href="#">
+                                <i class="fas fa-address-book"></i> Kontak
+                            </a>
+                        </li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>UU Polisi KotakuV3 2025</h1>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Cari pasal atau pelanggaran...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+
+        <table>
+            <thead class="nyawa">
+                <tr>
+                    <th colspan="5">TINDAK PIDANA LALU LINTAS</th>
+                </tr>
+                <tr>
+                    <th>Pasal</th>
+                    <th>Ceklis</th>
+                    <th class="text-left">Pelanggaran</th>
+                    <th>Denda ($)</th>
+                    <th>Massa Tahanan</th>
+                </tr>
+            </thead>
+            <tbody id="nyawaTable">
+                <tr>
+                    <td>A1</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A1" data-tindak="MENGEMUDI KENDARAAN BERMOTOR TANPA HELM"></td>
+                    <td class="text-left">MENGEMUDI KENDARAAN BERMOTOR TANPA HELM</td>
+                    <td>1,000</td>
+                    <td>PENILANGAN</td>
+                </tr>
+                <tr>
+                    <td>A2</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A2" data-tindak="TIDAK MEMILIKI SIM"></td>
+                    <td class="text-left">TIDAK MEMILIKI SIM</td>
+                    <td>1,000</td>
+                    <td>PENILANGAN</td>
+                </tr>
+                <tr>
+                    <td>A3</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A3" data-tindak="KENDARAAN TIDAK MEMILIKI PLATE"></td>
+                    <td class="text-left">KENDARAAN TIDAK MEMILIKI PLATE</td>
+                    <td>1,000</td>
+                    <td>PENILANGAN</td>
+                </tr>
+                <tr>
+                    <td>A4</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A4" data-tindak="PARKIR SEMBARANGAN"></td>
+                    <td class="text-left">PARKIR SEMBARANGAN</td>
+                    <td>1,500</td>
+                    <td>IMPOUND 1 HARI</td>
+                </tr>
+                <tr>
+                    <td>A5</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A5" data-tindak="KENDARAAN BERADA DI ZONA TERLARANG/ILEGAL"></td>
+                    <td class="text-left">KENDARAAN BERADA DI ZONA TERLARANG/ILEGAL</td>
+                    <td>1,500</td>
+                    <td>IMPOUND 1 HARI</td>
+                </tr>
+                <tr>
+                    <td>A6</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A6" data-tindak="TIDAK MEMBAYAR TOL"></td>
+                    <td class="text-left">TIDAK MEMBAYAR TOL</td>
+                    <td>2,000</td>
+                    <td>IMPOUND 3 HARI</td>
+                </tr>
+                <tr>
+                    <td>A7</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A7" data-tindak="MELAWAN ARUS JALAN"></td>
+                    <td class="text-left">MELAWAN ARUS JALAN</td>
+                    <td>2,000</td>
+                    <td>IMPOUND 2 HARI</td>
+                </tr>
+                <tr>
+                    <td>A8</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A8" data-tindak="BERKENDARA MELEBIHI BATAS KECEPATAN"></td>
+                    <td class="text-left">BERKENDARA MELEBIHI BATAS KECEPATAN</td>
+                    <td>2,000</td>
+                    <td>IMPOUND 2 HARI</td>
+                </tr>
+                <tr>
+                    <td>A9</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A9" data-tindak="BERKENDARA UGAL-UGALAN"></td>
+                    <td class="text-left">BERKENDARA UGAL-UGALAN</td>
+                    <td>2,000</td>
+                    <td>IMPOUND 2 HARI</td>
+                </tr>
+                <tr>
+                    <td>A10</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A10" data-tindak="MELARIKAN DIRI SAAT RAZIA"></td>
+                    <td class="text-left">MELARIKAN DIRI SAAT RAZIA</td>
+                    <td>2,500</td>
+                    <td>IMPOUND 3 HARI</td>
+                </tr>
+                <tr>
+                    <td>A11</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A11" data-tindak="TERLIBAT DALAM BALAPAN LIAR"></td>
+                    <td class="text-left">TERLIBAT DALAM BALAPAN LIAR</td>
+                    <td>2,500</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>A12</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A12" data-tindak="KENDARAAN TRUCK MEMASUKI AREA KERAMAIAN"></td>
+                    <td class="text-left">KENDARAAN TRUCK MEMASUKI AREA KERAMAIAN</td>
+                    <td>2,500</td>
+                    <td>IMPOUND 3 HARI</td>
+                </tr>
+                <tr>
+                    <td>A13</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A13" data-tindak="KENDARAAN BERADA DI TKP PEPERANGAN"></td>
+                    <td class="text-left">KENDARAAN BERADA DI TKP PEPERANGAN</td>
+                    <td>3,000</td>
+                    <td>IMPOUND 4 HARI</td>
+                </tr>
+                <tr>
+                    <td>A14</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A14" data-tindak="TERDAPAT BARANG ILLEGAL PADA KENDARAAN"></td>
+                    <td class="text-left">TERDAPAT BARANG ILLEGAL PADA KENDARAAN</td>
+                    <td>3,000</td>
+                    <td>IMPOUND 4 HARI</td>
+                </tr>
+                <tr>
+                    <td>A15</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A15" data-tindak="TERDAPAT SENJATA PADA KENDARAAN"></td>
+                    <td class="text-left">TERDAPAT SENJATA PADA KENDARAAN</td>
+                    <td>3,500</td>
+                    <td>IMPOUND 7 HARI</td>
+                </tr>
+                <tr>
+                    <td>A16</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A16" data-tindak="MENGHAMBAT ARUS LALU LINTAS"></td>
+                    <td class="text-left">MENGHAMBAT ARUS LALU LINTAS</td>
+                    <td>4,000</td>
+                    <td>IMPOUND 5 HARI</td>
+                </tr>
+                <tr>
+                    <td>A17</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="A17" data-tindak="MENGHAMBAT JALANNYA KENDARAAN PRIORITAS"></td>
+                    <td class="text-left">MENGHAMBAT JALANNYA KENDARAAN PRIORITAS</td>
+                    <td>4,500</td>
+                    <td>IMPOUND 5 HARI</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table>
+            <thead class="nyawa">
+                <tr>
+                    <th colspan="5">PELANGGARAN RINGAN</th>
+                </tr>
+                <tr>
+                    <th>Pasal</th>
+                    <th>Ceklis</th>
+                    <th class="text-left">Pelanggaran</th>
+                    <th>Denda ($)</th>
+                    <th>Massa Tahanan</th>
+                </tr>
+            </thead>
+            <tbody id="nyawaTable">
+                <tr>
+                    <td>B1</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B1" data-tindak="TIDAK MEMILIKI KARTU IDENTITAS / KTP"></td>
+                    <td class="text-left">TIDAK MEMILIKI KARTU IDENTITAS / KTP</td>
+                    <td>1,500</td>
+                    <td>SANKSI SOSIAL</td>
+                </tr>
+                <tr>
+                    <td>B2</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B2" data-tindak="MENYALAHGUNAKAN PANGGILAN HOTLINE"></td>
+                    <td class="text-left">MENYALAHGUNAKAN PANGGILAN HOTLINE</td>
+                    <td>2,500</td>
+                    <td>SANKSI SOSIAL</td>
+                </tr>
+                <tr>
+                    <td>B3</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B3" data-tindak="MERUSAK FASILITAS UMUM"></td>
+                    <td class="text-left">MERUSAK FASILITAS UMUM</td>
+                    <td>3,000</td>
+                    <td>5 HARI</td>
+                </tr>
+                <tr>
+                    <td>B4</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B4" data-tindak="MEMBUAT KERIBUTAN DI TEMPAT UMUM"></td>
+                    <td class="text-left">MEMBUAT KERIBUTAN DI TEMPAT UMUM</td>
+                    <td>3,500</td>
+                    <td>6 HARI</td>
+                </tr>
+                <tr>
+                    <td>B5</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B5" data-tindak="PENCEMARAN NAMA BAIK WARGA"></td>
+                    <td class="text-left">PENCEMARAN NAMA BAIK WARGA</td>
+                    <td>3,500</td>
+                    <td>7 HARI</td>
+                </tr>
+                <tr>
+                    <td>B6</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B6" data-tindak="PENCEMARAN NAMA BAIK INSTANSI"></td>
+                    <td class="text-left">PENCEMARAN NAMA BAIK INSTANSI</td>
+                    <td>5,000</td>
+                    <td>10 HARI</td>
+                </tr>
+                <tr>
+                    <td>B7</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B7" data-tindak="MELAKUKAN KEKERASAN FISIK TERHADAP WARGA"></td>
+                    <td class="text-left">MELAKUKAN KEKERASAN FISIK TERHADAP WARGA</td>
+                    <td>4,000</td>
+                    <td>5 HARI</td>
+                </tr>
+                <tr>
+                    <td>B8</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B8" data-tindak="MELAKUKAN PENIPUAN TERHADAP WARGA"></td>
+                    <td class="text-left">MELAKUKAN PENIPUAN TERHADAP WARGA</td>
+                    <td>4,500</td>
+                    <td>6 HARI</td>
+                </tr>
+                <tr>
+                    <td>B9</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B9" data-tindak="MELAKUKAN PELECEHAN SEKSUAL TERHADAP WARGA"></td>
+                    <td class="text-left">MELAKUKAN PELECEHAN SEKSUAL TERHADAP WARGA</td>
+                    <td>4,500</td>
+                    <td>6 HARI</td>
+                </tr>
+                <tr>
+                    <td>B10</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B10" data-tindak="MERUSAK/MEREBUT ASET PRIBADI MILIK WARGA"></td>
+                    <td class="text-left">MERUSAK/MEREBUT ASET PRIBADI MILIK WARGA</td>
+                    <td>5,000</td>
+                    <td>6 HARI</td>
+                </tr>
+                <tr>
+                    <td>B11</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B11" data-tindak="PENGHINAAN TERHADAP INSTANSI"></td>
+                    <td class="text-left">PENGHINAAN TERHADAP INSTANSI</td>
+                    <td>5,000</td>
+                    <td>10 HARI</td>
+                </tr>
+                <tr>
+                    <td>B12</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B12" data-tindak="PEMBERIAN INFORMASI PALSU"></td>
+                    <td class="text-left">PEMBERIAN INFORMASI PALSU</td>
+                    <td>5,500</td>
+                    <td>7 HARI</td>
+                </tr>
+                <tr>
+                    <td>B13</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B13" data-tindak="MEMBERIKAN LAPORAN PALSU KE KEPOLISIAN"></td>
+                    <td class="text-left">MEMBERIKAN LAPORAN PALSU KE KEPOLISIAN</td>
+                    <td>5,500</td>
+                    <td>7 HARI</td>
+                </tr>
+                <tr>
+                    <td>B14</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B14" data-tindak="MEMBAWA SENJATA TAJAM/TUMPUL DI TEMPAT UMUM"></td>
+                    <td class="text-left">MEMBAWA SENJATA TAJAM/TUMPUL DI TEMPAT UMUM</td>
+                    <td>5,500</td>
+                    <td>9 HARI</td>
+                </tr>
+                <tr>
+                    <td>B15</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B15" data-tindak="KABUR SAAT DIBERHENTIKAN"></td>
+                    <td class="text-left">KABUR SAAT DIBERHENTIKAN</td>
+                    <td>7,000</td>
+                    <td>10 HARI</td>
+                </tr>
+                <tr>
+                    <td>B16</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B16" data-tindak="PENYALAHGUNAAN SENJATA TUMPUL"></td>
+                    <td class="text-left">PENYALAHGUNAAN SENJATA TUMPUL</td>
+                    <td>10,000</td>
+                    <td>10 HARI</td>
+                </tr>
+                <tr>
+                    <td>B17</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="B17" data-tindak="PELANGGARAN TIDAK TERDEFINISI"></td>
+                    <td class="text-left">PELANGGARAN TIDAK TERDEFINISI</td>
+                    <td>4,500</td>
+                    <td>IMPOUND 5 HARI</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table>
+            <thead class="nyawa">
+                <tr>
+                    <th colspan="5">PELANGGARAN SEDANG</th>
+                </tr>
+                <tr>
+                    <th>Pasal</th>
+                    <th>Ceklis</th>
+                    <th class="text-left">Pelanggaran</th>
+                    <th>Denda ($)</th>
+                    <th>Massa Tahanan</th>
+                </tr>
+            </thead>
+            <tbody id="nyawaTable">
+                <tr>
+                    <td>C1</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C1" data-tindak="MENANGKAP SATWA YANG DILINDUNGI"></td>
+                    <td class="text-left">MENANGKAP SATWA YANG DILINDUNGI</td>
+                    <td>4,500</td>
+                    <td>10 HARI</td>
+                </tr>
+                <tr>
+                    <td>C2</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C2" data-tindak="BERADA DI ZONA ILLEGAL"></td>
+                    <td class="text-left">BERADA DI ZONA ILLEGAL</td>
+                    <td>4,500</td>
+                    <td>10 HARI</td>
+                </tr>
+                <tr>
+                    <td>C3</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C3" data-tindak="MENCURI/MERUSAK KENDARAAN ORANG LAIN"></td>
+                    <td class="text-left">MENCURI/MERUSAK KENDARAAN ORANG LAIN</td>
+                    <td>4,500</td>
+                    <td>15 HARI</td>
+                </tr>
+                <tr>
+                    <td>C4</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C4" data-tindak="PENYALAHGUNAAN SENJATA TAJAM/TUMPUL"></td>
+                    <td class="text-left">PENYALAHGUNAAN SENJATA TAJAM/TUMPUL</td>
+                    <td>4,500</td>
+                    <td>15 HARI</td>
+                </tr>
+                <tr>
+                    <td>C5</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C5" data-tindak="MENGGUNAKAN ATRIBUT POLISI BERUPA AKSESORI MAUPUN MODIFIKASI KENDARAAN"></td>
+                    <td class="text-left">MENGGUNAKAN ATRIBUT POLISI BERUPA AKSESORI MAUPUN MODIFIKASI KENDARAAN</td>
+                    <td>5,000</td>
+                    <td>15 HARI</td>
+                </tr>
+                <tr>
+                    <td>C6</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C6" data-tindak="MELAKUKAN PEMBURUAN ILEGAL"></td>
+                    <td class="text-left">MELAKUKAN PEMBURUAN ILEGAL</td>
+                    <td>5,000</td>
+                    <td>15 HARI</td>
+                </tr>
+                <tr>
+                    <td>C7</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C7" data-tindak="KEPEMILIKAN UANG MERAH"></td>
+                    <td class="text-left">KEPEMILIKAN UANG MERAH</td>
+                    <td>5,000</td>
+                    <td>15 HARI</td>
+                </tr>
+                <tr>
+                    <td>C8</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C8" data-tindak="MELAKUKAN JUDI CASINO"></td>
+                    <td class="text-left">MELAKUKAN JUDI CASINO</td>
+                    <td>5,000</td>
+                    <td>15 HARI</td>
+                </tr>
+                <tr>
+                    <td>C9</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C9" data-tindak="KETAHUAN MELAKUKAN JUAL BELI CHIP JUDI SECARA ILEGAL"></td>
+                    <td class="text-left">KETAHUAN MELAKUKAN JUAL BELI CHIP JUDI SECARA ILEGAL</td>
+                    <td>5,000</td>
+                    <td>20 HARI</td>
+                </tr>
+                <tr>
+                    <td>C10</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C10" data-tindak="MEMILIKI BARANG ILEGAL LAINNYA"></td>
+                    <td class="text-left">MEMILIKI BARANG ILEGAL LAINNYA</td>
+                    <td>5,000</td>
+                    <td>25 HARI</td>
+                </tr>
+                <tr>
+                    <td>C11</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C11" data-tindak="KEPEMILIKAN BARANG ILEGAL MENTAH"></td>
+                    <td class="text-left">KEPEMILIKAN BARANG ILEGAL MENTAH</td>
+                    <td>5,000</td>
+                    <td>25 HARI</td>
+                </tr>
+                <tr>
+                    <td>C12</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C12" data-tindak="KEPEMILIKAN OBAT-OBATAN TERLARANG"></td>
+                    <td class="text-left">KEPEMILIKAN OBAT-OBATAN TERLARANG</td>
+                    <td>5,000</td>
+                    <td>30 HARI</td>
+                </tr>
+                <tr>
+                    <td>C13</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C13" data-tindak="PENGEDARAN OBAT-OBATAN TERLARANG"></td>
+                    <td class="text-left">PENGEDARAN OBAT-OBATAN TERLARANG</td>
+                    <td>6,000</td>
+                    <td>35 HARI</td>
+                </tr>
+                <tr>
+                    <td>C14</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C14" data-tindak="MENANAM/MENCABUT KANABIS"></td>
+                    <td class="text-left">MENANAM/MENCABUT KANABIS</td>
+                    <td>6,000</td>
+                    <td>35 HARI</td>
+                </tr>
+                <tr>
+                    <td>C15</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C15" data-tindak="PRODUKSI OBAT-OBATAN TERLARANG"></td>
+                    <td class="text-left">PRODUKSI OBAT-OBATAN TERLARANG</td>
+                    <td>6,000</td>
+                    <td>35 HARI</td>
+                </tr>
+                <tr>
+                    <td>C16</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C16" data-tindak="MEMBELI SENJATA MENGGUNAKAN UANG MERAH DI BLACKMARKET"></td>
+                    <td class="text-left">MEMBELI SENJATA MENGGUNAKAN UANG MERAH DI BLACKMARKET</td>
+                    <td>6,500</td>
+                    <td>35 HARI</td>
+                </tr>
+                <tr>
+                    <td>C17</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C17" data-tindak="UPAYA MENGHILANGKAN BARANG BUKTI"></td>
+                    <td class="text-left">UPAYA MENGHILANGKAN BARANG BUKTI</td>
+                    <td>6,500</td>
+                    <td>40 HARI</td>
+                </tr>
+                <tr>
+                    <td>C18</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C18" data-tindak="TERLIBAT DALAM MENGAJAK/MEMILIKI/MEMAKAI/MENJUAL/MEMBELI MIRAS"></td>
+                    <td class="text-left">TERLIBAT DALAM MENGAJAK/MEMILIKI/MEMAKAI/MENJUAL/MEMBELI MIRAS</td>
+                    <td>7,000</td>
+                    <td>40 HARI</td>
+                </tr>
+                <tr>
+                    <td>C19</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C19" data-tindak="UPAYA MELINDUNGI,MENYEMBUNYIKAN,MEMBANTU PELAKU TINDAK KRIMINAL"></td>
+                    <td class="text-left">UPAYA MELINDUNGI,MENYEMBUNYIKAN,MEMBANTU PELAKU TINDAK KRIMINAL</td>
+                    <td>7,000</td>
+                    <td>40 HARI</td>
+                </tr>
+                <tr>
+                    <td>C20</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C20" data-tindak="MELAKUKAN PEMALAKAN TERHADAP WARGA"></td>
+                    <td class="text-left">MELAKUKAN PEMALAKAN TERHADAP WARGA</td>
+                    <td>7,000</td>
+                    <td>35 HARI</td>
+                </tr>
+                <tr>
+                    <td>C21</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C21" data-tindak="KEPEMILIKAN 1-10 CLIP AMUNISI SENJATA"></td>
+                    <td class="text-left">KEPEMILIKAN 1-10 CLIP AMUNISI SENJATA</td>
+                    <td>7,500</td>
+                    <td>40 HARI</td>
+                </tr>
+                <tr>
+                    <td>C22</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C22" data-tindak="KEPEMILIKAN 11-50 CLIP AMUNISI SENJATA"></td>
+                    <td class="text-left">KEPEMILIKAN 11-50 CLIP AMUNISI SENJATA</td>
+                    <td>8,000</td>
+                    <td>45 HARI</td>
+                </tr>
+                <tr>
+                    <td>C23</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C23" data-tindak="KEPEMILIKAN 51-200 CLIP AMUNISI SENJATA"></td>
+                    <td class="text-left">KEPEMILIKAN 51-200 CLIP AMUNISI SENJATA</td>
+                    <td>9,000</td>
+                    <td>50 HARI</td>
+                </tr>
+                <tr>
+                    <td>C24</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C24" data-tindak="MELAKUKAN PENCULIKAN TERHADAP WARGA"></td>
+                    <td class="text-left">MELAKUKAN PENCULIKAN TERHADAP WARGA</td>
+                    <td>10,000</td>
+                    <td>45 HARI</td>
+                </tr>
+                <tr>
+                    <td>C25</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C25" data-tindak="MELAKUKAN PENEMBAKAN TERHADAP WARGA"></td>
+                    <td class="text-left">MELAKUKAN PENEMBAKAN TERHADAP WARGA</td>
+                    <td>10,000</td>
+                    <td>50 HARI</td>
+                </tr>
+                <tr>
+                    <td>C26</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C26" data-tindak="MELAKUKAN PENEMBAKAN TERHADAP INSTANSI"></td>
+                    <td class="text-left">MELAKUKAN PENEMBAKAN TERHADAP INSTANSI</td>
+                    <td>10,000</td>
+                    <td>55 HARI</td>
+                </tr>
+                <tr>
+                    <td>C27</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C27" data-tindak="KEPEMILIKAN SENJATA ILEGAL RINGAN"></td>
+                    <td class="text-left">KEPEMILIKAN SENJATA ILEGAL RINGAN</td>
+                    <td>15,000</td>
+                    <td>55 HARI</td>
+                </tr>
+                <tr>
+                    <td>C28</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C28" data-tindak="KEPEMILIKAN SENJATA ILEGAL BERAT"></td>
+                    <td class="text-left">KEPEMILIKAN SENJATA ILEGAL BERAT</td>
+                    <td>20,000</td>
+                    <td>60 HARI</td>
+                </tr>
+                <tr>
+                    <td>C29</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C29" data-tindak="MELAKUKAN PERAMPOKAN WARUNG"></td>
+                    <td class="text-left">MELAKUKAN PERAMPOKAN WARUNG</td>
+                    <td>30,000</td>
+                    <td>60 HARI</td>
+                </tr>
+                <tr>
+                    <td>C30</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="C30" data-tindak="MELAKUKAN PERAMPOKAN BANK"></td>
+                    <td class="text-left">MELAKUKAN PERAMPOKAN BANK</td>
+                    <td>35,000</td>
+                    <td>65 HARI</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table>
+            <thead class="nyawa">
+                <tr>
+                    <th colspan="5">PELANGGARAN BERAT</th>
+                </tr>
+                <tr>
+                    <th>Pasal</th>
+                    <th>Ceklis</th>
+                    <th class="text-left">Pelanggaran</th>
+                    <th>Denda ($)</th>
+                    <th>Massa Tahanan</th>
+                </tr>
+            </thead>
+            <tbody id="nyawaTable">
+                <tr>
+                    <td>D1</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D1" data-tindak="TERLIBAT DALAM PEPERANGAN"></td>
+                    <td class="text-left">TERLIBAT DALAM PEPERANGAN</td>
+                    <td>30,000</td>
+                    <td>60 HARI</td>
+                </tr>
+                <tr>
+                    <td>D2</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D2" data-tindak="MEMILIKI 200-400 CLIP AMUNISI"></td>
+                    <td class="text-left">MEMILIKI 200-400 CLIP AMUNISI</td>
+                    <td>30,000</td>
+                    <td>60 HARI</td>
+                </tr>
+                <tr>
+                    <td>D3</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D3" data-tindak="PENGEDARAN SENJATA ILEGAL"></td>
+                    <td class="text-left">PENGEDARAN SENJATA ILEGAL</td>
+                    <td>30,000</td>
+                    <td>45 HARI</td>
+                </tr>
+                <tr>
+                    <td>D4</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D4" data-tindak="PRODUKSI SENJATA ILEGAL"></td>
+                    <td class="text-left">PRODUKSI SENJATA ILEGAL</td>
+                    <td>35,000</td>
+                    <td>50 HARI</td>
+                </tr>
+                <tr>
+                    <td>D5</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D5" data-tindak="MELAKUKAN PENCULIKAN TERHADAP WARGA"></td>
+                    <td class="text-left">MELAKUKAN PENCULIKAN TERHADAP WARGA</td>
+                    <td>35,000</td>
+                    <td>60 HARI</td>
+                </tr>
+                <tr>
+                    <td>D6</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D6" data-tindak="MELAKUKAN PERCOBAAN PEMBUNUHAN"></td>
+                    <td class="text-left">MELAKUKAN PERCOBAAN PEMBUNUHAN</td>
+                    <td>40,000</td>
+                    <td>70 HARI</td>
+                </tr>
+                <tr>
+                    <td>D7</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D7" data-tindak="PENYANDERAAN TERHADAP WARGA SIPIL"></td>
+                    <td class="text-left">PENYANDERAAN TERHADAP WARGA SIPIL</td>
+                    <td>40,000</td>
+                    <td>45 HARI</td>
+                </tr>
+                <tr>
+                    <td>D8</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D8" data-tindak="MENGGANGGU PROSES JALANNYA PELEBURAN"></td>
+                    <td class="text-left">MENGGANGGU PROSES JALANNYA PELEBURAN</td>
+                    <td>50,000</td>
+                    <td>60 HARI</td>
+                </tr>
+                <tr>
+                    <td>D9</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D9" data-tindak="PENYANDERAAN TERHADAP INSTANSI"></td>
+                    <td class="text-left">PENYANDERAAN TERHADAP INSTANSI</td>
+                    <td>50,000</td>
+                    <td>60 HARI</td>
+                </tr>
+                <tr>
+                    <td>D10</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D10" data-tindak="MELAKUKAN PEMBUNUHAN"></td>
+                    <td class="text-left">MELAKUKAN PEMBUNUHAN</td>
+                    <td>50,000</td>
+                    <td>HUKUMAN MATI / 120 HARI</td>
+                </tr>
+                <tr>
+                    <td>D11</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D11" data-tindak="MEMILIKI OBAT-OBATAN TERLARANG DI ATAS 500"></td>
+                    <td class="text-left">MEMILIKI OBAT-OBATAN TERLARANG DI ATAS 500</td>
+                    <td>60,000</td>
+                    <td>HUKUMAN MATI / 120 HARI</td>
+                </tr>
+                <tr>
+                    <td>D12</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D12" data-tindak="MEMILIKI CLIP AMUNISI DI ATAS 400"></td>
+                    <td class="text-left">MEMILIKI CLIP AMUNISI DI ATAS 400</td>
+                    <td>100,000</td>
+                    <td>HUKUMAN MATI / 120 HARI</td>
+                </tr>
+                <tr>
+                    <td>D13</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D13" data-tindak="KORUPSI TERHADAP PERUSAHAAN SWASTA"></td>
+                    <td class="text-left">KORUPSI TERHADAP PERUSAHAAN SWASTA</td>
+                    <td>PENYITAAN ASET</td>
+                    <td>HUKUMAN MATI / 150 HARI</td>
+                </tr>
+                <tr>
+                    <td>D14</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D14" data-tindak="KORUPSI ANGGARAN PEMERINTAH"></td>
+                    <td class="text-left">KORUPSI ANGGARAN PEMERINTAH</td>
+                    <td>-</td>
+                    <td>HUKUMAN MATI</td>
+                </tr>
+                <tr>
+                    <td>D15</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D15" data-tindak="MEMILIKI CATATAN KRIMINAL SEBANYAK 5 KALI"></td>
+                    <td class="text-left">MEMILIKI CATATAN KRIMINAL SEBANYAK 5 KALI</td>
+                    <td>-</td>
+                    <td>HUKUMAN MATI</td>
+                </tr>
+                <tr>
+                    <td>D16</td>
+                    <td><input type="checkbox" class="checkbox" data-uu="D16" data-tindak="TERORISME"></td>
+                    <td class="text-left">TERORISME</td>
+                    <td>150,000</td>
+                    <td>HUKUMAN MATI / 200 HARI</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Ringkasan Pelanggaran -->
+        <div id="summary-container">
+            <h3>Ringkasan Pelanggaran</h3>
+            <table id="summary-table">
+                <thead>
+                    <tr>
+                        <th>Pasal</th>
+                        <th>Pelanggaran</th>
+                        <th>Denda</th>
+                        <th>Tahanan</th>
+                    </tr>
+                </thead>
+                <tbody id="summary-body">
+                    <!-- Summary will be added here by JavaScript -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">Total Pasal: <span id="total-pasal"></span></th>
+                        <th id="total-denda">$0</th>
+                        <th id="total-tahanan">0 Hari</th>
+                    </tr>
+                </tfoot>
+            </table>
+            
+            <div class="button-group">
+                <button class="copy-button" id="copyUU">
+                    <i class="fas fa-copy"></i> Salin Undang-Undang
+                </button>
+                <button class="copy-button button-denda" id="copyDenda">
+                    <i class="fas fa-money-bill-wave"></i> Salin Denda
+                </button>
+                <button class="copy-button button-tahanan" id="copyTahanan">
+                    <i class="fas fa-clock"></i> Salin Masa Tahanan
+                </button>
+                <button class="copy-button button-reset" id="resetButton">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Button -->
+    <div class="contact-button" id="contactBtn">
+        <i class="fas fa-info-circle"></i>
+    </div>
+    
+<!-- Contact Modal -->
+<div class="modal" id="contactModal">
+    <div class="modal-content animate-pop">
+        <span class="close">&times;</span>
+        <h2><i class="fas fa-info-circle"></i> Tentang Pembuat</h2>
+        <div class="modal-body">
+            <div class="profile-section">
+                <img src="mario.png" alt="Foto Profil" class="profile-pic">
+                <h3>Mariono Senopati</h3>
+                <p><i class="fab fa-discord"></i> <strong>Discord:</strong> itsmario0</p>
+                <p><i class="fas fa-calendar-alt"></i> <strong>Dibuat pada:</strong> 10 Mei 2025</p>
+                <p><i class="fas fa-envelope"></i> <strong>Email:</strong> Kaming SUn!</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/rfatrzy/" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@itsmario192" target="_blank" class="social-icon">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://github.com" target="_blank" class="social-icon">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Modal Content Animation */
+.animate-pop {
+    animation: pop 0.4s ease-out;
+}
+
+@keyframes pop {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Profile Section */
+.profile-section {
+    text-align: center;
+    padding: 10px;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 3px solid #3085d6;
+}
+
+.social-links {
+    margin-top: 10px;
+}
+
+.social-icon {
+    font-size: 1.5rem;
+    margin: 0 8px;
+    color: #555;
+    transition: color 0.3s;
+}
+
+.social-icon:hover {
+    color: #3085d6;
+}
+
+/* Modal Basic Styling */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+}
+</style>
+
+    
+    <script>
+        // Modal functionality
+        const contactBtn = document.getElementById('contactBtn');
+        const contactModal = document.getElementById('contactModal');
+        const closeBtn = document.querySelector('.close');
+        
+        contactBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            contactModal.style.display = 'flex';
+        });
+        
+        closeBtn.addEventListener('click', function() {
+            contactModal.style.display = 'none';
+        });
+        
+        window.addEventListener('click', function(e) {
+            if (e.target === contactModal) {
+                contactModal.style.display = 'none';
+            }
+        });
+
+        // Untuk tampilan mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const sopLink = document.querySelector('.sop-link');
+            
+            if (window.innerWidth <= 768) {
+                sopLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    this.classList.toggle('active');
+                });
+            }
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#beratTable tr, #sedangTable tr, #ringanTable tr');
+            
+            rows.forEach(row => {
+                // Skip header rows
+                if (row.querySelector('th')) return;
+                
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                    row.classList.add('highlight');
+                } else {
+                    row.style.display = 'none';
+                    row.classList.remove('highlight');
+                }
+            });
+        });
+    
+        // Checkbox functionality for summary
+        const checkboxes = document.querySelectorAll('.checkbox');
+        const summaryBody = document.getElementById('summary-body');
+        const totalDenda = document.getElementById('total-denda');
+        const totalTahanan = document.getElementById('total-tahanan');
+        const totalPasal = document.getElementById('total-pasal');
+        const summaryContainer = document.getElementById('summary-container');
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSummary);
+        });
+        
+        function parseDendaValue(dendaText) {
+            if (dendaText.includes('$')) {
+                return parseInt(dendaText.replace(/\D/g, '')) || 0;
+            }
+            return 0;
+        }
+        
+        function parseTahananValue(tahananText) {
+            // Handle "HUKUMAN MATI / 200 HARI" case
+            if (tahananText.includes('HUKUMAN MATI') && tahananText.match(/\d+/)) {
+                return parseInt(tahananText.match(/\d+/)[0]);
+            }
+            // Handle "IMPOUND 5 HARI" case
+            if (tahananText.match(/\d+/)) {
+                return parseInt(tahananText.match(/\d+/)[0]);
+            }
+            return 0;
+        }
+        
+        function formatTahananDisplay(tahananText) {
+            // Standardize display format
+            if (tahananText.includes('IMPOUND')) {
+                return tahananText.replace('IMPOUND', '').trim() + ' (IMPOUND)';
+            }
+            if (tahananText.includes('HUKUMAN MATI')) {
+                return tahananText.replace('/', 'atau').trim();
+            }
+            if (tahananText.match(/\d+/)) {
+                return tahananText + (tahananText.includes('HARI') ? '' : ' HARI');
+            }
+            return tahananText;
+        }
+
+        function parseDendaValue(dendaText) {
+            // Handle case when there's no fine
+            if (!dendaText || dendaText === '-' || dendaText === '') {
+                return 0;
+            }
+            
+            // Remove all non-numeric characters except digits and decimal point
+            const numericString = dendaText.replace(/[^\d.]/g, '');
+            
+            // Parse to float then convert to integer (assuming we don't have decimal fines)
+            return parseInt(numericString) || 0;
+        }
+        
+        function updateSummary() {
+            // Clear previous summary
+            summaryBody.innerHTML = '';
+            
+            let dendaTotal = 0;
+            let tahananTotal = 0;
+            let selectedCount = 0;
+            let pasalList = [];
+            
+            // Add selected violations to summary
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedCount++;
+                    const row = checkbox.closest('tr');
+                    const pasal = row.cells[0].textContent;
+                    const tindak = checkbox.dataset.tindak;
+                    const dendaCell = row.cells[3].textContent.trim();
+                    const tahananCell = row.cells[4].textContent.trim();
+                    
+                    // Parse denda value
+                    const dendaValue = parseDendaValue(dendaCell);
+                    dendaTotal += dendaValue;
+                    
+                    // Parse tahanan value (only numeric parts)
+                    const tahananValue = parseTahananValue(tahananCell);
+                    tahananTotal += tahananValue;
+                    
+                    pasalList.push(pasal);
+                    
+                    // Add to summary table
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td>${pasal}</td>
+                        <td>${tahananCell.includes('HUKUMAN MATI') ? `<span class="death-penalty">${tindak}</span>` : tindak}</td>
+                        <td>${dendaCell.startsWith('$') ? dendaCell : (dendaCell === '-' ? '-' : `$${dendaCell}`)}</td>
+                        <td>${formatTahananDisplay(tahananCell)}</td>
+                    `;
+                    summaryBody.appendChild(newRow);
+                }
+            });
+            
+            // Update totals
+            totalDenda.textContent = dendaTotal > 0 ? `$${dendaTotal.toLocaleString()}` : '-';
+            totalTahanan.textContent = tahananTotal > 0 ? `${tahananTotal} Hari` : '-';
+            totalPasal.textContent = pasalList.join(', ');
+            
+            // Show/hide summary container based on selections
+            summaryContainer.style.display = selectedCount > 0 ? 'block' : 'none';
+        }
+        
+        // Copy UU functionality
+        document.getElementById('copyUU').addEventListener('click', function() {
+            const pasalText = document.getElementById('total-pasal').textContent;
+            
+            if (!pasalText) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Tidak ada pasal yang dipilih',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                return;
+            }
+            
+            navigator.clipboard.writeText(pasalText).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Pasal telah disalin ke clipboard',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }).catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Tidak dapat menyalin teks: ' + err,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+        });
+        
+        // Copy Denda functionality
+        document.getElementById('copyDenda').addEventListener('click', function() {
+            const dendaText = document.getElementById('total-denda').textContent;
+            
+            if (dendaText === '-') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Tidak ada denda yang dipilih',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                return;
+            }
+            
+            navigator.clipboard.writeText(dendaText).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Total denda telah disalin ke clipboard',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }).catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Tidak dapat menyalin teks: ' + err,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+        });
+        
+        // Copy Tahanan functionality
+        document.getElementById('copyTahanan').addEventListener('click', function() {
+            const tahananText = document.getElementById('total-tahanan').textContent;
+            
+            if (tahananText === '-') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Tidak ada masa tahanan yang dipilih',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                return;
+            }
+            
+            navigator.clipboard.writeText(tahananText).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Masa tahanan telah disalin ke clipboard',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }).catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Tidak dapat menyalin teks: ' + err,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+        });
+        
+        // Reset button functionality
+        document.getElementById('resetButton').addEventListener('click', function() {
+            Swal.fire({
+                title: 'Reset Data',
+                text: 'Apakah Anda yakin ingin mereset semua pilihan?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Reset!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Uncheck all checkboxes
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    
+                    // Update summary
+                    updateSummary();
+                    
+                    Swal.fire({
+                        title: 'Direset!',
+                        text: 'Semua pilihan telah direset',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }
+            });
+        });
+        
+    </script>
+</body>
+</html>
