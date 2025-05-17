@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - Polisi KotakuV3</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <style>
     * {
@@ -112,6 +112,35 @@
       margin-top: 10px;
       font-size: 14px;
     }
+
+    .input-with-icon {
+    position: relative;
+    }
+
+    /* Style ikon */
+    .input-with-icon .icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999; /* Warna abu-abu seperti placeholder */
+    font-size: 14px;
+    z-index: 2;
+    }
+
+    /* Style input */
+    .input-with-icon input {
+    width: 100%;
+    padding: 12px 12px 12px 40px; /* Ruang untuk ikon */
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    }
+
+    /* Sembunyikan placeholder asli saat input aktif */
+    .input-with-icon input:focus::placeholder {
+    color: transparent;
+    }
   </style>
 </head>
 <body>
@@ -123,7 +152,6 @@
       <form id="registerForm">
         <div class="input-group">
             <div class="input-with-icon">
-            <i class="fas fa-envelope icon"></i>
             <input type="email" id="email" placeholder="Email" required>
             </div>
         </div>
