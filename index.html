@@ -120,20 +120,25 @@
       <img src="logo.png" alt="Logo Polisi KotakuV3">
     </div>
     <h1>LOGIN SISTEM POLISI KOTAKUV3</h1>
-      <div class="input-group">
+      <div class="login-form">
+  <div class="input-group">
     <label for="email">Email</label>
-    <span class="icon">
-    <i class="fas fa-envelope"></i>
-    </span>
-    <input type="email" id="email" name="email" placeholder="Email" required>
+    <div class="input-wrapper">
+      <span class="icon">
+        <i class="fas fa-envelope"></i>
+      </span>
+      <input type="email" id="email" name="email" placeholder="Masukkan email Anda" required>
     </div>
+    <div class="error-message">Please fill out this field</div>
+  </div>
 
-    <div class="input-group">
+  <div class="input-group">
     <label for="password">Password</label>
-    <span class="icon">
-    <i class="fas fa-lock"></i>
-    </span>
-    <input type="password" id="password" name="password" placeholder="Password" required>
+    <div class="input-wrapper">
+      <span class="icon">
+        <i class="fas fa-lock"></i>
+      </span>
+      <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required>
     </div>
 
       <div id="errorMessage" class="error-message"></div>
