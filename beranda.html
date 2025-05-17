@@ -1249,7 +1249,8 @@
     cursor: pointer;
 }
 </style>
-
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     
     <script>
         // Modal functionality
@@ -1545,15 +1546,35 @@
                 }
             });
         });
+
+          const firebaseConfig = {
+            apiKey: "AIzaSyDORjstoitYjNGvvqKx7f-PjOfOP3seIfc",
+            authDomain: "uukotaku.firebaseapp.com",
+            projectId: "uukotaku",
+            storageBucket: "uukotaku.firebasestorage.app",
+            messagingSenderId: "666796153269",
+            appId: "1:666796153269:web:4b201eeaeacf9a24b261fc"
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         
-        // Script untuk tombol Logout
+        
         document.getElementById('logoutBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            // Hapus session login
-            sessionStorage.removeItem('isLoggedIn');
-            // Redirect ke halaman login
-            window.location.href = 'index.html';
-        });
+    e.preventDefault();
+    
+    // Logout dari Firebase
+    firebase.auth().signOut().then(() => {
+        // Opsional: hapus sessionStorage jika kamu menggunakannya
+        sessionStorage.removeItem('isLoggedIn');
+
+        // Arahkan ke halaman login
+        window.location.href = 'index.html';
+    }).catch((error) => {
+        console.error('Logout gagal:', error);
+        alert('Gagal logout. Silakan coba lagi.');
+    });
     </script>
 </body>
 </html>
