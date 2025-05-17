@@ -177,47 +177,44 @@
     </form>
   </div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDORjstoitYjNGvvqKx7f-PjOfOP3seIfc",
-      authDomain: "uukotaku.firebaseapp.com",
-      projectId: "uukotaku",
-      storageBucket: "uukotaku.firebasestorage.app",
-      messagingSenderId: "666796153269",
-      appId: "1:666796153269:web:4b201eeaeacf9a24b261fc"
-    };
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDORjstoitYjNGvvqKx7f-PjOfOP3seIfc",
+    authDomain: "uukotaku.firebaseapp.com",
+    projectId: "uukotaku",
+    storageBucket: "uukotaku.firebasestorage.app",
+    messagingSenderId: "666796153269",
+    appId: "1:666796153269:web:4b201eeaeacf9a24b261fc"
+  };
 
-    // Inisialisasi Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  // Inisialisasi Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    // Cek apakah user sudah login
-    auth.onAuthStateChanged((user) => {
-      const isLoginPage = window.location.pathname.includes("login.html") || window.location.pathname === "/";
+  // Cek apakah user sudah login
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      window.location.href = "beranda.html";
+    }
+  });
 
-      if (user && isLoginPage) {
-        // Jika user sudah login dan sedang di halaman login, alihkan ke beranda
+  // Tangani Form Login
+  document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // Mencegah reload halaman
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const errorMessage = document.getElementById('errorMessage');
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        // Login sukses
         window.location.href = "beranda.html";
-      }
-    });
-
-    // Tangani Form Login
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const errorMessage = document.getElementById('errorMessage');
-
-      auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          // Login sukses
-          window.location.href = "beranda.html";
-        })
-        .catch((error) => {
-          errorMessage.textContent = error.message;
-        });
-    });
-  </script>
+      })
+      .catch((error) => {
+        errorMessage.textContent = error.message;
+      });
+  });
+</script>
 </body>
 </html>
