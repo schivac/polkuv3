@@ -1288,22 +1288,17 @@
         // Fungsi pencarian
         document.getElementById('searchInput').addEventListener('input', function () {
             const searchTerm = this.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#nyawaTable tr');
 
-            const allTables = ['#beratTable', '#sedangTable', '#ringanTable'];
-            allTables.forEach(selector => {
-            const rows = document.querySelectorAll(`${selector} tbody tr`);
-            
             rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-
-                if (text.includes(searchTerm)) {
+            const rowText = row.textContent.toLowerCase();
+            if (rowText.includes(searchTerm)) {
                 row.style.display = '';
                 row.classList.add('highlight');
-                } else {
+            } else {
                 row.style.display = 'none';
                 row.classList.remove('highlight');
-                }
-            });
+            }
             });
         });
     
