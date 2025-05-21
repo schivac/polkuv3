@@ -79,6 +79,10 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
+        .button-discord {
+            background-color: var(--danger-color) !important;
+        }
         
         .button-reset {
             background-color: var(--danger-color) !important;
@@ -1139,6 +1143,9 @@
                 <button class="copy-button button-reset" id="resetButton">
                     <i class="fas fa-undo"></i> Reset
                 </button>
+                <button class="copy-button button-discord" id="kirimDiscordButton">
+                <i class="fab fa-discord"></i> Kirim ke Discord
+                </button>
             </div>
         </div>
     </div>
@@ -1589,6 +1596,151 @@
       window.location.href = "index.html";
     }
   });
+
+    //DIscord Section
+    if (Object.keys(currentData).length === 0) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Belum Ada Data',
+        text: 'Silahkan tekan tombol TOTAL terlebih dahulu untuk mengumpulkan data pelanggaran.'
+    });
+    return;
+}
+
+    if (!namaSuspect || !namaPetugas) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Form Tidak Lengkap',
+        text: 'Nama suspect dan petugas wajib diisi!'
+    });
+    return;
+}
+
+    fetch(WEBHOOK_URL_DISCORD, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(message)
+})
+.then(response => {
+    if (response.ok) {
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Laporan berhasil dikirim ke Discord!'
+        });
+
+        document.getElementById('discordModal').style.display = 'none';
+        document.getElementById('previewContainer').style.display = 'none';
+
+        // Reset form
+        document.getElementById('namaSuspect').value = '';
+        document.getElementById('idCard').value = '';
+        document.getElementById('foto').value = '';
+        document.getElementById('namaPetugas').value = '';
+    } else {
+        throw new Error('Gagal mengirim ke Discord');
+    }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal',
+            text: 'Gagal mengirim laporan ke Discord: ' + error.message
+        });
+    });
+
+    Swal.fire({
+    icon: 'info',
+    title: 'Perhatian',
+    text: 'Silahkan isi data terlebih dahulu.'
+    });
+
+    function kirimKeDiscord() {
+    const namaSuspect = document.getElementById('namaSuspect').value;
+    const idCard = document.getElementById('idCard').value;
+    const foto = document.getElementById('foto').value;
+    const namaPetugas = document.getElementById('namaPetugas').value;
+    
+    if (!namaSuspect || !namaPetugas) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Data belum lengkap!',
+            text: 'Nama suspect dan nama petugas wajib diisi!',
+        });
+        return;
+    }
+
+    Swal.fire({
+        title: 'Kirim Laporan?',
+        text: "Apakah kamu yakin ingin mengirim laporan ke Discord?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Kirim!',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const message = {
+                content: `**LAPORAN BARU - DATA PELANGGARAN**\n\n` +
+                        `**NAMA SUSPECT:** ${namaSuspect}\n` +
+                        `**ID CARD:** ${idCard || '-'}\n` +
+                        `**PASAL:** ${currentData.pasalString}\n` +
+                        `**FOTO:** ${foto || '-'}\n` +
+                        `**BERAPA BULAN:** ${currentData.totalJail} hari\n` +
+                        `**DENDA:** ${currentData.totalDenda}\n` +
+                        `**KRONOLOGI SUSPECT:**\n` +
+                        `${currentData.deskripsiList.map(item => `• ${item}`).join('\n')}\n` +
+                        `**HUKUMAN MATI:** ${currentData.adaHukumanMati ? "YA" : "TIDAK"}\n\n` +
+                        `**NAMA PETUGAS:** ${namaPetugas}\n` +
+                        `*Laporan dibuat pada: ${new Date().toLocaleString()}*`
+            };
+
+            const WEBHOOK_URL_DISCORD = "https://discord.com/api/webhooks/1373652976144613426/c0mXCxJDeZa74jj41LmxJzkLCnl9y7VauSnBESIexTvMYKk6YErQBml_YWJWutJMCfdM";
+
+            fetch(WEBHOOK_URL_DISCORD, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(message)
+            })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Laporan Terkirim!',
+                        text: 'Laporan berhasil dikirim ke Discord.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    document.getElementById('discordModal').style.display = 'none';
+                    document.getElementById('previewContainer').style.display = 'none';
+
+                    // Reset input
+                    document.getElementById('namaSuspect').value = '';
+                    document.getElementById('idCard').value = '';
+                    document.getElementById('foto').value = '';
+                    document.getElementById('namaPetugas').value = '';
+                } else {
+                    throw new Error('Gagal mengirim ke Discord');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: 'Laporan gagal dikirim ke Discord: ' + error.message
+                });
+            });
+        }
+    });
+}
     </script>
 </body>
 </html>
