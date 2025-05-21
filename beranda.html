@@ -1573,6 +1573,14 @@
         alert('Gagal logout. Silakan coba lagi.');
     });
 });
+
+// Proteksi halaman: hanya untuk user yang sudah login
+  auth.onAuthStateChanged((user) => {
+    if (!user) {
+      // Belum login, redirect ke halaman login
+      window.location.href = "index.html";
+    }
+  });
     </script>
 </body>
 </html>
