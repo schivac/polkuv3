@@ -1656,19 +1656,29 @@
     icon: 'info',
     title: 'Perhatian',
     text: 'Silahkan isi data terlebih dahulu.'
-    });
+});
+
 
     function kirimKeDiscord() {
     const namaSuspect = document.getElementById('namaSuspect').value;
     const idCard = document.getElementById('idCard').value;
     const foto = document.getElementById('foto').value;
     const namaPetugas = document.getElementById('namaPetugas').value;
-    
-    if (!namaSuspect || !namaPetugas) {
+
+    if (Object.keys(currentData).length === 0) {
         Swal.fire({
             icon: 'warning',
-            title: 'Data belum lengkap!',
-            text: 'Nama suspect dan nama petugas wajib diisi!',
+            title: 'Belum Ada Data',
+            text: 'Silahkan tekan tombol TOTAL terlebih dahulu untuk mengumpulkan data pelanggaran.'
+        });
+        return;
+    }
+
+    if (!namaSuspect || !namaPetugas) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Form Tidak Lengkap',
+            text: 'Nama suspect dan petugas wajib diisi!'
         });
         return;
     }
@@ -1718,6 +1728,7 @@
                         showConfirmButton: false
                     });
 
+                    // Sembunyikan modal
                     document.getElementById('discordModal').style.display = 'none';
                     document.getElementById('previewContainer').style.display = 'none';
 
@@ -1741,6 +1752,7 @@
         }
     });
 }
+
     </script>
 </body>
 </html>
