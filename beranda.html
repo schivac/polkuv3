@@ -430,6 +430,33 @@
                 display: block;
             }
         }
+
+            .button-discord {
+        background-color: #5865F2 !important;  /* Warna brand Discord */
+        color: white !important;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .button-discord:hover {
+        background-color: #4752C4 !important;  /* Warna Discord yang lebih gelap */
+        transform: translateY(-1px);
+    }
+    
+    .button-discord:active {
+        transform: translateY(0);
+    }
+    
+    .button-discord i {
+        font-size: 1.2em;
+    }
     </style>
 </head>
 <body>
@@ -1143,7 +1170,7 @@
                 <button class="copy-button button-reset" id="resetButton">
                     <i class="fas fa-undo"></i> Reset
                 </button>
-                <button class="copy-button button-discord" id="kirimDiscordButton">
+                <button class="button-discord" id="kirimDiscordButton" onclick="kirimKeDiscord()">
                 <i class="fab fa-discord"></i> Kirim ke Discord
                 </button>
             </div>
