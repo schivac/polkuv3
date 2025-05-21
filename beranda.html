@@ -1626,27 +1626,24 @@
 
     //DIscord Section
 function kirimKeDiscord() {
-    // Dapatkan elemen dengan pengecekan null
-    const getElementValue = (id) => {
-        const element = document.getElementById(id);
-        return element ? element.value : '';
-    };
-
-    const namaSuspect = getElementValue('namaSuspect');
-    const idCard = getElementValue('idCard');
-    const foto = getElementValue('foto');
-    const namaPetugas = getElementValue('namaPetugas');
-
-    // Validasi data
-    if (Object.keys(currentData || {}).length === 0) {
+    // Pastikan currentData terdefinisi
+    if (!window.currentData || Object.keys(currentData).length === 0) {
         Swal.fire({
             icon: 'warning',
-            title: 'Belum Ada Data',
+            title: 'Data Kosong',
             text: 'Silahkan tekan tombol TOTAL terlebih dahulu untuk mengumpulkan data pelanggaran.'
         });
         return;
     }
 
+    // Dapatkan nilai dari form input
+    const getValue = (id) => document.getElementById(id)?.value || '-';
+    const namaSuspect = getValue('namaSuspect');
+    const idCard = getValue('idCard');
+    const foto = getValue('foto');
+    const namaPetugas = getValue('namaPetugas');
+
+    // Validasi input wajib
     if (!namaSuspect || !namaPetugas) {
         Swal.fire({
             icon: 'error',
@@ -1668,22 +1665,22 @@ function kirimKeDiscord() {
         cancelButtonColor: '#d33'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Kirim ke Discord
+            // Format pesan Discord
             const message = {
                 content: `**LAPORAN BARU - DATA PELANGGARAN**\n\n` +
                         `**NAMA SUSPECT:** ${namaSuspect}\n` +
-                        `**ID CARD:** ${idCard || '-'}\n` +
-                        `**PASAL:** ${currentData.pasalString}\n` +
-                        `**FOTO:** ${foto || '-'}\n` +
-                        `**BERAPA BULAN:** ${currentData.totalJail} hari\n` +
-                        `**DENDA:** ${currentData.totalDenda}\n` +
-                        `**KRONOLOGI SUSPECT:**\n` +
-                        `${(currentData.deskripsiList || []).map(item => `• ${item}`).join('\n')}\n` +
+                        `**ID CARD:** ${idCard}\n` +
+                        `**PASAL YANG DILANGGAR:**\n${currentData.pasalList.map(p => `• ${p}`).join('\n')}\n` +
+                        `**FOTO BUKTI:** ${foto}\n` +
+                        `**TOTAL DENDA:** $${currentData.dendaTotal}\n` +
+                        `**TOTAL MASA TAHANAN:** ${currentData.tahananTotal} hari\n` +
+                        `**KRONOLOGI:**\n${currentData.deskripsiList?.map(item => `• ${item}`).join('\n') || 'Tidak ada keterangan'}\n` +
                         `**HUKUMAN MATI:** ${currentData.adaHukumanMati ? "YA" : "TIDAK"}\n\n` +
                         `**NAMA PETUGAS:** ${namaPetugas}\n` +
                         `*Laporan dibuat pada: ${new Date().toLocaleString()}*`
             };
 
+            // Kirim ke Discord
             fetch(WEBHOOK_URL_DISCORD, {
                 method: "POST",
                 headers: {
@@ -1692,9 +1689,7 @@ function kirimKeDiscord() {
                 body: JSON.stringify(message)
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Gagal mengirim ke Discord');
-                }
+                if (!response.ok) throw new Error('Gagal mengirim ke Discord');
                 return response;
             })
             .then(() => {
@@ -1705,8 +1700,8 @@ function kirimKeDiscord() {
                     timer: 2000,
                     showConfirmButton: false
                 });
-
-                // Reset form jika elemen ada
+                
+                // Reset form
                 ['namaSuspect', 'idCard', 'foto', 'namaPetugas'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
@@ -1723,7 +1718,6 @@ function kirimKeDiscord() {
         }
     });
 }
-
     </script>
 </body>
 </html>
