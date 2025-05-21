@@ -1626,13 +1626,19 @@
 
     //DIscord Section
 function kirimKeDiscord() {
-    const namaSuspect = document.getElementById('namaSuspect').value;
-    const idCard = document.getElementById('idCard').value;
-    const foto = document.getElementById('foto').value;
-    const namaPetugas = document.getElementById('namaPetugas').value;
+    // Dapatkan elemen dengan pengecekan null
+    const getElementValue = (id) => {
+        const element = document.getElementById(id);
+        return element ? element.value : '';
+    };
+
+    const namaSuspect = getElementValue('namaSuspect');
+    const idCard = getElementValue('idCard');
+    const foto = getElementValue('foto');
+    const namaPetugas = getElementValue('namaPetugas');
 
     // Validasi data
-    if (Object.keys(currentData).length === 0) {
+    if (Object.keys(currentData || {}).length === 0) {
         Swal.fire({
             icon: 'warning',
             title: 'Belum Ada Data',
@@ -1662,7 +1668,7 @@ function kirimKeDiscord() {
         cancelButtonColor: '#d33'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Persiapkan pesan untuk Discord
+            // Kirim ke Discord
             const message = {
                 content: `**LAPORAN BARU - DATA PELANGGARAN**\n\n` +
                         `**NAMA SUSPECT:** ${namaSuspect}\n` +
@@ -1672,15 +1678,12 @@ function kirimKeDiscord() {
                         `**BERAPA BULAN:** ${currentData.totalJail} hari\n` +
                         `**DENDA:** ${currentData.totalDenda}\n` +
                         `**KRONOLOGI SUSPECT:**\n` +
-                        `${currentData.deskripsiList.map(item => `• ${item}`).join('\n')}\n` +
+                        `${(currentData.deskripsiList || []).map(item => `• ${item}`).join('\n')}\n` +
                         `**HUKUMAN MATI:** ${currentData.adaHukumanMati ? "YA" : "TIDAK"}\n\n` +
                         `**NAMA PETUGAS:** ${namaPetugas}\n` +
                         `*Laporan dibuat pada: ${new Date().toLocaleString()}*`
             };
 
-            const WEBHOOK_URL_DISCORD = "https://discord.com/api/webhooks/1373652976144613426/c0mXCxJDeZa74jj41LmxJzkLCnl9y7VauSnBESIexTvMYKk6YErQBml_YWJWutJMCfdM";
-
-            // Kirim ke Discord
             fetch(WEBHOOK_URL_DISCORD, {
                 method: "POST",
                 headers: {
@@ -1689,13 +1692,10 @@ function kirimKeDiscord() {
                 body: JSON.stringify(message)
             })
             .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return response.json().then(err => {
-                        throw new Error(err.message || 'Gagal mengirim ke Discord');
-                    });
+                if (!response.ok) {
+                    throw new Error('Gagal mengirim ke Discord');
                 }
+                return response;
             })
             .then(() => {
                 Swal.fire({
@@ -1706,13 +1706,11 @@ function kirimKeDiscord() {
                     showConfirmButton: false
                 });
 
-                // Sembunyikan modal dan reset form
-                document.getElementById('discordModal').style.display = 'none';
-                document.getElementById('previewContainer').style.display = 'none';
-                document.getElementById('namaSuspect').value = '';
-                document.getElementById('idCard').value = '';
-                document.getElementById('foto').value = '';
-                document.getElementById('namaPetugas').value = '';
+                // Reset form jika elemen ada
+                ['namaSuspect', 'idCard', 'foto', 'namaPetugas'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
             })
             .catch(error => {
                 console.error('Error:', error);
