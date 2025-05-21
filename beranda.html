@@ -1285,23 +1285,25 @@
             }
         });
 
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#beratTable tr, #sedangTable tr, #ringanTable tr');
+        // Fungsi pencarian
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+
+            const allTables = ['#beratTable', '#sedangTable', '#ringanTable'];
+            allTables.forEach(selector => {
+            const rows = document.querySelectorAll(`${selector} tbody tr`);
             
             rows.forEach(row => {
-                // Skip header rows
-                if (row.querySelector('th')) return;
-                
                 const text = row.textContent.toLowerCase();
+
                 if (text.includes(searchTerm)) {
-                    row.style.display = '';
-                    row.classList.add('highlight');
+                row.style.display = '';
+                row.classList.add('highlight');
                 } else {
-                    row.style.display = 'none';
-                    row.classList.remove('highlight');
+                row.style.display = 'none';
+                row.classList.remove('highlight');
                 }
+            });
             });
         });
     
