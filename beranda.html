@@ -1447,6 +1447,14 @@
             totalDenda.textContent = dendaTotal > 0 ? `$${dendaTotal.toLocaleString()}` : '-';
             totalTahanan.textContent = tahananTotal > 0 ? `${tahananTotal} Hari` : '-';
             totalPasal.textContent = pasalList.join(', ');
+
+            // TAMBAHAN: Simpan data ke window.currentData untuk fungsi Discord
+            window.currentData = {
+            dendaTotal: dendaTotal,
+            tahananTotal: tahananTotal,
+            pasalList: pasalList,
+            selectedCount: selectedCount
+            };
             
             // Show/hide summary container based on selections
             summaryContainer.style.display = selectedCount > 0 ? 'block' : 'none';
@@ -1625,27 +1633,27 @@
     }
   });
 
-    //DIscord Section
-              function kirimKeDiscord() {
-    // Pastikan currentData terdefinisi
-    if (!window.currentData || Object.keys(window.currentData).length === 0) {
+    // Fungsi kirimKeDiscord yang diperbaiki
+function kirimKeDiscord() {
+    // Pastikan currentData terdefinisi dan ada data yang dipilih
+    if (!window.currentData || window.currentData.selectedCount === 0) {
         Swal.fire({
             icon: 'warning',
             title: 'Data Kosong',
-            text: 'Silahkan tekan tombol TOTAL terlebih dahulu untuk mengumpulkan data pelanggaran.'
+            text: 'Silahkan pilih pasal pelanggaran terlebih dahulu dan tekan tombol TOTAL.'
         });
         return;
     }
 
     // Dapatkan nilai dari form input
-    const getValue = (id) => document.getElementById(id)?.value || '-';
+    const getValue = (id) => document.getElementById(id)?.value?.trim() || '-';
     const namaSuspect = getValue('namaSuspect');
     const idCard = getValue('idCard');
     const foto = getValue('foto');
     const namaPetugas = getValue('namaPetugas');
 
     // Validasi input wajib
-    if (!namaSuspect || !namaPetugas) {
+    if (!namaSuspect || namaSuspect === '-' || !namaPetugas || namaPetugas === '-') {
         Swal.fire({
             icon: 'error',
             title: 'Form Tidak Lengkap',
@@ -1666,17 +1674,20 @@
         cancelButtonColor: '#d33'
     }).then((result) => {
         if (result.isConfirmed) {
+            // Format daftar pasal dengan bullet points
+            const pasalFormatted = window.currentData.pasalList.map(pasal => `• ${pasal}`).join('\n');
+            
             // Format pesan Discord
             const message = {
                 content: `**LAPORAN BARU - DATA PELANGGARAN**\n\n` +
                         `**NAMA SUSPECT:** ${namaSuspect}\n` +
                         `**ID CARD:** ${idCard}\n` +
-                        `**PASAL YANG DILANGGAR:**\n${window.currentData.pasalList.join('\n')}\n` +
-                        `**TOTAL DENDA:** $${window.currentData.dendaTotal}\n` +
-                        `**TOTAL MASA TAHANAN:** ${window.currentData.tahananTotal} hari\n` +
+                        `**PASAL YANG DILANGGAR:**\n${pasalFormatted}\n` +
+                        `**TOTAL DENDA:** ${window.currentData.dendaTotal > 0 ? `$${window.currentData.dendaTotal.toLocaleString()}` : 'Tidak ada denda'}\n` +
+                        `**TOTAL MASA TAHANAN:** ${window.currentData.tahananTotal > 0 ? `${window.currentData.tahananTotal} hari` : 'Tidak ada tahanan'}\n` +
                         `**FOTO BUKTI:** ${foto}\n` +
                         `**NAMA PETUGAS:** ${namaPetugas}\n` +
-                        `*Laporan dibuat pada: ${new Date().toLocaleString()}*`
+                        `*Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}*`
             };
 
             // Kirim ke Discord
@@ -1688,8 +1699,11 @@
                 body: JSON.stringify(message)
             })
             .then(response => {
-                if (!response.ok) throw new Error('Gagal mengirim ke Discord');
-                return response.json();
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                // Discord webhook biasanya mengembalikan status 204 (No Content)
+                return response.status === 204 ? null : response.json();
             })
             .then(() => {
                 Swal.fire({
@@ -1700,11 +1714,15 @@
                     showConfirmButton: false
                 });
                 
-                // Reset form
+                // Reset form dan data
                 ['namaSuspect', 'idCard', 'foto', 'namaPetugas'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
                 });
+                
+                // Optional: Reset checkboxes dan summary
+                // checkboxes.forEach(checkbox => checkbox.checked = false);
+                // updateSummary();
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -1716,6 +1734,24 @@
             });
         }
     });
+}
+
+// Fungsi helper untuk inisialisasi (pastikan dipanggil saat halaman dimuat)
+function initializeSystem() {
+    // Inisialisasi currentData sebagai object kosong
+    window.currentData = {
+        dendaTotal: 0,
+        tahananTotal: 0,
+        pasalList: [],
+        selectedCount: 0
+    };
+    
+    // Event listener untuk checkbox (jika belum ada)
+    if (typeof checkboxes !== 'undefined') {
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSummary);
+        });
+    }
 }
     </script>
 </body>
