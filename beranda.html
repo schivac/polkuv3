@@ -1627,7 +1627,7 @@
     //DIscord Section
 function kirimKeDiscord() {
     // Pastikan currentData terdefinisi
-    if (!window.currentData || Object.keys(currentData).length === 0) {
+    if (!window.currentData || Object.keys(window.currentData).length === 0) {
         Swal.fire({
             icon: 'warning',
             title: 'Data Kosong',
@@ -1670,12 +1670,12 @@ function kirimKeDiscord() {
                 content: `**LAPORAN BARU - DATA PELANGGARAN**\n\n` +
                         `**NAMA SUSPECT:** ${namaSuspect}\n` +
                         `**ID CARD:** ${idCard}\n` +
-                        `**PASAL YANG DILANGGAR:**\n${currentData.pasalList.map(p => `• ${p}`).join('\n')}\n` +
+                        `**PASAL YANG DILANGGAR:**\n${window.currentData.pasalList.map(p => `• ${p}`).join('\n')}\n` +
                         `**FOTO BUKTI:** ${foto}\n` +
-                        `**TOTAL DENDA:** $${currentData.dendaTotal}\n` +
-                        `**TOTAL MASA TAHANAN:** ${currentData.tahananTotal} hari\n` +
-                        `**KRONOLOGI:**\n${currentData.deskripsiList?.map(item => `• ${item}`).join('\n') || 'Tidak ada keterangan'}\n` +
-                        `**HUKUMAN MATI:** ${currentData.adaHukumanMati ? "YA" : "TIDAK"}\n\n` +
+                        `**TOTAL DENDA:** $${window.currentData.dendaTotal}\n` +
+                        `**TOTAL MASA TAHANAN:** ${window.currentData.tahananTotal} hari\n` +
+                        `**KRONOLOGI:**\n${window.currentData.deskripsiList?.map(item => `• ${item}`).join('\n') || 'Tidak ada keterangan'}\n` +
+                        `**HUKUMAN MATI:** ${window.currentData.adaHukumanMati ? "YA" : "TIDAK"}\n\n` +
                         `**NAMA PETUGAS:** ${namaPetugas}\n` +
                         `*Laporan dibuat pada: ${new Date().toLocaleString()}*`
             };
@@ -1690,7 +1690,7 @@ function kirimKeDiscord() {
             })
             .then(response => {
                 if (!response.ok) throw new Error('Gagal mengirim ke Discord');
-                return response;
+                return response.json(); // Mengambil response JSON jika diperlukan
             })
             .then(() => {
                 Swal.fire({
@@ -1718,6 +1718,7 @@ function kirimKeDiscord() {
         }
     });
 }
+
     </script>
 </body>
 </html>
