@@ -1634,8 +1634,9 @@
   });
 
     // Fungsi kirimKeDiscord yang diperbaiki
-function kirimKeDiscord() {
-    // Pastikan currentData terdefinisi dan ada data yang dipilih
+// Fungsi untuk membuka modal Discord
+function openDiscordModal() {
+    // Cek apakah ada data pelanggaran yang dipilih
     if (!window.currentData || window.currentData.selectedCount === 0) {
         Swal.fire({
             icon: 'warning',
@@ -1644,16 +1645,34 @@ function kirimKeDiscord() {
         });
         return;
     }
+    
+    document.getElementById('discordModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
 
-    // Dapatkan nilai dari form input
-    const getValue = (id) => document.getElementById(id)?.value?.trim() || '-';
-    const namaSuspect = getValue('namaSuspect');
-    const idCard = getValue('idCard');
-    const foto = getValue('foto');
-    const namaPetugas = getValue('namaPetugas');
+// Fungsi untuk menutup modal Discord
+function closeDiscordModal() {
+    document.getElementById('discordModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+    resetDiscordForm();
+}
 
-    // Validasi input wajib
-    if (!namaSuspect || namaSuspect === '-' || !namaPetugas || namaPetugas === '-') {
+// Fungsi untuk reset form
+function resetDiscordForm() {
+    document.getElementById('namaSuspect').value = '';
+    document.getElementById('namaPetugas').value = '';
+    document.getElementById('idCard').value = '';
+    document.getElementById('foto').value = '';
+}
+
+// Fungsi preview laporan
+function previewReport() {
+    const namaSuspect = document.getElementById('namaSuspect').value.trim();
+    const namaPetugas = document.getElementById('namaPetugas').value.trim();
+    const idCard = document.getElementById('idCard').value || 'Tidak Ada';
+    const foto = document.getElementById('foto').value || 'Tidak Ada';
+
+    if (!namaSuspect || !namaPetugas) {
         Swal.fire({
             icon: 'error',
             title: 'Form Tidak Lengkap',
@@ -1662,96 +1681,140 @@ function kirimKeDiscord() {
         return;
     }
 
-    // Konfirmasi pengiriman
-    Swal.fire({
-        title: 'Kirim Laporan?',
-        text: "Apakah kamu yakin ingin mengirim laporan ke Discord?",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Kirim!',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Format daftar pasal dengan bullet points
-            const pasalFormatted = window.currentData.pasalList.map(pasal => `• ${pasal}`).join('\n');
-            
-            // Format pesan Discord
-            const message = {
-                content: `**LAPORAN BARU - DATA PELANGGARAN**\n\n` +
-                        `**NAMA SUSPECT:** ${namaSuspect}\n` +
-                        `**ID CARD:** ${idCard}\n` +
-                        `**PASAL YANG DILANGGAR:**\n${pasalFormatted}\n` +
-                        `**TOTAL DENDA:** ${window.currentData.dendaTotal > 0 ? `$${window.currentData.dendaTotal.toLocaleString()}` : 'Tidak ada denda'}\n` +
-                        `**TOTAL MASA TAHANAN:** ${window.currentData.tahananTotal > 0 ? `${window.currentData.tahananTotal} hari` : 'Tidak ada tahanan'}\n` +
-                        `**FOTO BUKTI:** ${foto}\n` +
-                        `**NAMA PETUGAS:** ${namaPetugas}\n` +
-                        `*Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}*`
-            };
+    // Format preview dengan data real
+    const pasalFormatted = window.currentData.pasalList.map(pasal => `• ${pasal}`).join('\n');
+    
+    const previewMessage = `**PREVIEW LAPORAN**\n\n` +
+                          `**NAMA SUSPECT:** ${namaSuspect}\n` +
+                          `**NAMA PETUGAS:** ${namaPetugas}\n` +
+                          `**ID CARD:** ${idCard}\n` +
+                          `**FOTO BUKTI:** ${foto}\n\n` +
+                          `**PASAL YANG DILANGGAR:**\n${pasalFormatted}\n\n` +
+                          `**TOTAL DENDA:** ${window.currentData.dendaTotal > 0 ? `$${window.currentData.dendaTotal.toLocaleString()}` : 'Tidak ada denda'}\n` +
+                          `**TOTAL MASA TAHANAN:** ${window.currentData.tahananTotal > 0 ? `${window.currentData.tahananTotal} hari` : 'Tidak ada tahanan'}`;
 
-            // Kirim ke Discord
-            fetch(WEBHOOK_URL_DISCORD, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(message)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                // Discord webhook biasanya mengembalikan status 204 (No Content)
-                return response.status === 204 ? null : response.json();
-            })
-            .then(() => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Laporan Terkirim!',
-                    text: 'Laporan berhasil dikirim ke Discord.',
-                    timer: 2000,
-                    showConfirmButton: false
-                });
-                
-                // Reset form dan data
-                ['namaSuspect', 'idCard', 'foto', 'namaPetugas'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.value = '';
-                });
-                
-                // Optional: Reset checkboxes dan summary
-                // checkboxes.forEach(checkbox => checkbox.checked = false);
-                // updateSummary();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: 'Laporan gagal dikirim ke Discord: ' + (error.message || 'Terjadi kesalahan')
-                });
-            });
-        }
+    Swal.fire({
+        title: 'Preview Laporan',
+        html: `<pre style="text-align: left; white-space: pre-wrap; font-family: monospace;">${previewMessage}</pre>`,
+        icon: 'info',
+        confirmButtonText: 'OK',
+        width: '600px'
     });
 }
 
-// Fungsi helper untuk inisialisasi (pastikan dipanggil saat halaman dimuat)
-function initializeSystem() {
-    // Inisialisasi currentData sebagai object kosong
-    window.currentData = {
-        dendaTotal: 0,
-        tahananTotal: 0,
-        pasalList: [],
-        selectedCount: 0
-    };
+// Fungsi utama untuk kirim ke Discord (yang sudah diperbaiki)
+function sendToDiscord() {
+    const namaSuspect = document.getElementById('namaSuspect').value?.trim();
+    const namaPetugas = document.getElementById('namaPetugas').value?.trim();
+    const idCard = document.getElementById('idCard').value || 'Tidak Ada';
+    const foto = document.getElementById('foto').value || 'Tidak Ada';
+
+    // Validasi input wajib
+    if (!namaSuspect || !namaPetugas) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Form Tidak Lengkap',
+            text: 'Nama suspect dan petugas wajib diisi!'
+        });
+        return;
+    }
+
+    // Show loading animation
+    const loadingEl = document.getElementById('sendLoading');
+    const textEl = document.getElementById('sendText');
+    const sendBtn = document.querySelector('.btn-send');
     
-    // Event listener untuk checkbox (jika belum ada)
-    if (typeof checkboxes !== 'undefined') {
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateSummary);
+    loadingEl.style.display = 'block';
+    textEl.textContent = 'Mengirim...';
+    sendBtn.disabled = true;
+
+    // Format daftar pasal dengan bullet points
+    const pasalFormatted = window.currentData.pasalList.map(pasal => `• ${pasal}`).join('\n');
+    
+    // Format pesan Discord
+    const message = {
+        content: `**LAPORAN BARU - DATA PELANGGARAN**\n\n` +
+                `**NAMA SUSPECT:** ${namaSuspect}\n` +
+                `**ID CARD:** ${idCard}\n` +
+                `**PASAL YANG DILANGGAR:**\n${pasalFormatted}\n` +
+                `**TOTAL DENDA:** ${window.currentData.dendaTotal > 0 ? `$${window.currentData.dendaTotal.toLocaleString()}` : 'Tidak ada denda'}\n` +
+                `**TOTAL MASA TAHANAN:** ${window.currentData.tahananTotal > 0 ? `${window.currentData.tahananTotal} hari` : 'Tidak ada tahanan'}\n` +
+                `**FOTO BUKTI:** ${foto}\n` +
+                `**NAMA PETUGAS:** ${namaPetugas}\n` +
+                `*Laporan dibuat pada: ${new Date().toLocaleString('id-ID')}*`
+    };
+
+    // Kirim ke Discord
+    fetch(WEBHOOK_URL_DISCORD, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(message)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.status === 204 ? null : response.json();
+    })
+    .then(() => {
+        // Reset loading state
+        loadingEl.style.display = 'none';
+        textEl.textContent = '📤 Kirim';
+        sendBtn.disabled = false;
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'Laporan Terkirim!',
+            text: 'Laporan berhasil dikirim ke Discord.',
+            timer: 2000,
+            showConfirmButton: false
+        }).then(() => {
+            closeDiscordModal();
+        });
+    })
+    .catch(error => {
+        // Reset loading state
+        loadingEl.style.display = 'none';
+        textEl.textContent = '📤 Kirim';
+        sendBtn.disabled = false;
+        
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Gagal!',
+            text: 'Laporan gagal dikirim ke Discord: ' + (error.message || 'Terjadi kesalahan')
+        });
+    });
+}
+
+// Event listeners untuk modal
+document.addEventListener('DOMContentLoaded', function() {
+    // Close modal when clicking outside
+    const modal = document.getElementById('discordModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDiscordModal();
+            }
         });
     }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const modalActive = document.querySelector('.modal-overlay.active');
+            if (modalActive) {
+                closeDiscordModal();
+            }
+        }
+    });
+});
+
+// Fungsi untuk dipanggil dari tombol utama (ganti fungsi kirimKeDiscord yang lama)
+function kirimKeDiscord() {
+    openDiscordModal();
 }
     </script>
 </body>
