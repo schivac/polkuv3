@@ -458,73 +458,82 @@
         font-size: 1.2em;
     }
 
-        /* Styling Modern Form */
-    .report-modal {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    max-width: 480px;
-    margin: auto;
-    box-shadow: 0 0 20px rgba(0,0,0,0.15);
-    font-family: 'Segoe UI', sans-serif;
-    }
+        /* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .report-modal h2 {
-    margin-bottom: 20px;
-    font-size: 20px;
-    text-align: center;
-    color: #333;
-    }
+/* Modal Content */
+.report-modal {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.15);
+  font-family: 'Segoe UI', sans-serif;
+}
 
-    .report-modal label {
-    display: block;
-    margin-top: 12px;
-    font-weight: 600;
-    font-size: 14px;
-    }
+.report-modal h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
 
-    .report-modal input,
-    .report-modal select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    margin-top: 4px;
-    border-radius: 8px;
-    font-size: 14px;
-    }
+.report-modal label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 14px;
+}
 
-    .button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-    }
+.report-modal input,
+.report-modal select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
 
-    .btn {
-    padding: 10px 15px;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    }
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
 
-    .btn-preview {
-    background-color: #28a745;
-    color: white;
-    }
+.btn {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    .btn-discord {
-    background-color: #5865F2;
-    color: white;
-    }
+.btn-preview {
+  background-color: #28a745;
+  color: white;
+}
 
-    .btn-discord:hover {
-    background-color: #4752C4;
-    }
+.btn-discord {
+  background-color: #5865F2;
+  color: white;
+}
 
-    .btn-danger {
-    background-color: #dc3545;
-    color: white;
-    }
+.btn-discord:hover {
+  background-color: #4752C4;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
     </style>
 </head>
 <body>
@@ -1245,8 +1254,14 @@
         </div>
     </div>
 
-    <!-- Form Laporan -->
-    <div class="report-modal">
+    <!-- Tombol utama -->
+<button class="btn-discord" onclick="openModal()">
+  <i class="fab fa-discord"></i> Kirim ke Discord
+</button>
+
+<!-- Modal (Tersembunyi awalnya) -->
+<div id="modalForm" class="modal-overlay" style="display: none;">
+  <div class="report-modal">
     <h2>Kirim Laporan ke Discord</h2>
 
     <label>NAMA SUSPECT:</label>
@@ -1257,24 +1272,24 @@
 
     <label>ID CARD:</label>
     <select id="idCard">
-        <option value="Ada">Ada</option>
-        <option value="Tidak Ada">Tidak Ada</option>
+      <option value="Ada">Ada</option>
+      <option value="Tidak Ada">Tidak Ada</option>
     </select>
 
     <label>FOTO:</label>
     <select id="foto">
-        <option value="Ada">Ada</option>
-        <option value="Tidak Ada">Tidak Ada</option>
+      <option value="Ada">Ada</option>
+      <option value="Tidak Ada">Tidak Ada</option>
     </select>
 
     <div class="button-group">
-        <button onclick="previewLaporan()" class="btn btn-preview">Preview</button>
-        <button onclick="kirimKeDiscord()" class="btn btn-discord"><i class="fab fa-discord"></i> Kirim ke Discord</button>
-        <button onclick="closeModal()" class="btn btn-danger">Batal</button>
+      <button onclick="previewLaporan()" class="btn btn-preview">Preview</button>
+      <button onclick="kirimKeDiscord()" class="btn btn-discord">Kirim</button>
+      <button onclick="closeModal()" class="btn btn-danger">Batal</button>
     </div>
-    </div>
+  </div>
+</div>
 
-    
     <!-- Contact Button -->
     <div class="contact-button" id="contactBtn">
         <i class="fas fa-info-circle"></i>
@@ -1724,52 +1739,63 @@
   });
 
     // Fungsi kirimKeDiscord yang diperbaiki
-    function kirimKeDiscord() {
-    const suspect = document.getElementById('namaSuspect').value;
-    const petugas = document.getElementById('namaPetugas').value;
-    const idCard = document.getElementById('idCard').value;
-    const foto = document.getElementById('foto').value;
-    const totalPasal = document.getElementById('totalPasal').textContent;
-    const totalDenda = document.getElementById('totalDenda').textContent;
-    const totalTahanan = document.getElementById('totalTahanan').textContent;
+    function openModal() {
+  document.getElementById('modalForm').style.display = 'flex';
+}
 
-    const webhookURL = 'GANTI_DENGAN_WEBHOOK_DISCORD_KAMU';
+function closeModal() {
+  document.getElementById('modalForm').style.display = 'none';
+}
 
-    const data = {
-        content: null,
-        embeds: [{
-            title: `📝 Laporan Penindakan`,
-            color: 0x5865F2,
-            fields: [
-                { name: '👤 Nama Suspect', value: suspect || '-', inline: true },
-                { name: '👮 Nama Petugas', value: petugas || '-', inline: true },
-                { name: '🆔 ID Card', value: idCard, inline: true },
-                { name: '📷 Foto', value: foto, inline: true },
-                { name: '📜 Pasal Dilanggar', value: totalPasal || '-', inline: false },
-                { name: '💸 Total Denda', value: totalDenda || '-', inline: true },
-                { name: '⛓️ Total Tahanan', value: totalTahanan || '-', inline: true },
-            ],
-            footer: {
-                text: "Sistem Pelaporan Otomatis"
-            },
-            timestamp: new Date().toISOString()
-        }]
-    };
+function kirimKeDiscord() {
+  const suspect = document.getElementById('namaSuspect').value;
+  const petugas = document.getElementById('namaPetugas').value;
+  const idCard = document.getElementById('idCard').value;
+  const foto = document.getElementById('foto').value;
+  const totalPasal = document.getElementById('totalPasal')?.textContent || '-';
+  const totalDenda = document.getElementById('totalDenda')?.textContent || '-';
+  const totalTahanan = document.getElementById('totalTahanan')?.textContent || '-';
 
-    fetch(webhookURL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    }).then(res => {
-        if (res.ok) {
-            Swal.fire("Berhasil!", "Laporan berhasil dikirim ke Discord!", "success");
-        } else {
-            Swal.fire("Gagal", "Gagal mengirim laporan ke Discord.", "error");
-        }
-    }).catch(err => {
-        console.error(err);
-        Swal.fire("Error", "Terjadi kesalahan saat mengirim laporan.", "error");
-    });
+  const webhookURL = 'GANTI_DENGAN_WEBHOOK_DISCORD_KAMU';
+
+  const data = {
+    content: null,
+    embeds: [{
+      title: `📝 Laporan Penindakan`,
+      color: 0x5865F2,
+      fields: [
+        { name: '👤 Nama Suspect', value: suspect || '-', inline: true },
+        { name: '👮 Nama Petugas', value: petugas || '-', inline: true },
+        { name: '🆔 ID Card', value: idCard, inline: true },
+        { name: '📷 Foto', value: foto, inline: true },
+        { name: '📜 Pasal Dilanggar', value: totalPasal, inline: false },
+        { name: '💸 Total Denda', value: totalDenda, inline: true },
+        { name: '⛓️ Total Tahanan', value: totalTahanan, inline: true },
+      ],
+      footer: { text: "Sistem Pelaporan Otomatis" },
+      timestamp: new Date().toISOString()
+    }]
+  };
+
+  fetch(webhookURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(res => {
+    if (res.ok) {
+      Swal.fire("Berhasil!", "Laporan berhasil dikirim ke Discord!", "success");
+      closeModal();
+    } else {
+      Swal.fire("Gagal", "Gagal mengirim laporan ke Discord.", "error");
+    }
+  }).catch(err => {
+    console.error(err);
+    Swal.fire("Error", "Terjadi kesalahan saat mengirim laporan.", "error");
+  });
+}
+
+function previewLaporan() {
+  Swal.fire("Preview", "Fitur ini bisa kamu tambahkan nanti!", "info");
 }
 
     </script>
